@@ -10,6 +10,7 @@ client_scripts {
     'client/cl_arena_textEntries.lua',
     'client/cl_arena_main_menu.lua',
     'client/cl_arena_markers.lua',
+    'client/cl_arena_intro.lua',
 }
 
 server_scripts {
