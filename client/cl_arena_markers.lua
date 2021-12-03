@@ -39,6 +39,9 @@ Citizen.CreateThread(function()
             DrawScaleformMovie_3dSolid(outsideScaleform, markerCoords['outsideArena'].x, markerCoords['outsideArena'].y, markerCoords['outsideArena'].z+3, camcoord, 1.0, 1.0, 6.0, 6.0, 6.0, 100)
             if insideThemarker == true then
                 alert(GetLabelText('CBB_ALERT_OPEN_OUTSIDE_MENU'))
+                if IsControlJustReleased(0, 23) then
+                    ShowMainMenu()
+                end
             end
         end
         Citizen.Wait(0)
