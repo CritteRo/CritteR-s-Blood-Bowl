@@ -6,6 +6,9 @@ description 'GTA San Andreas Blood Bowl minigame working in FiveM.'
 
 client_scripts {
     'client/cl_arena_interior.lua',
+    'client/cl_arena_utils.lua',
+    'client/cl_arena_textEntries.lua',
+    'client/cl_arena_markers.lua',
 }
 
 server_scripts {

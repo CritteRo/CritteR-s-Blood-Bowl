@@ -75,10 +75,10 @@ Citizen.CreateThread(function()
 	--RequestIpl("xs_arena_interior_mod")
 	--RequestIpl("xs_arena_interior_mod_2")
 	RequestIpl("xs_arena_interior_vip") -- This is the interior bar for VIP's
-	RequestIpl("xs_int_placement_xs")
-    RequestIpl("xs_arena_banners_ipl")
-	RequestIpl("xs_mpchristmasbanners")
-    RequestIpl("xs_mpchristmasbanners_strm_0")
+	--RequestIpl("xs_int_placement_xs")
+    --RequestIpl("xs_arena_banners_ipl")
+	--RequestIpl("xs_mpchristmasbanners")
+    --RequestIpl("xs_mpchristmasbanners_strm_0")
 
 	-- Lets get and save our interior ID for use later
 	local interiorID = GetInteriorAtCoords(2800.000, -3800.000, 100.000)
