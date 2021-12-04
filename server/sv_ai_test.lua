@@ -1,23 +1,20 @@
-RegisterCommand('getpedcar', function(source, args)
-    local src = source
-    local coords = GetEntityCoords(GetPlayerPed(src))
-    local carID = spawnVehicle('deviant', coords.x, coords.y, coords.z, 0.0, 0,0, false, true)
-    local pedID = spawnPed(coords)
-    SetPedIntoVehicle(pedID, carID, 0)
-    SetPedIntoVehicle(GetPlayerPed(src), carID, -1)
-    TriggerClientEvent('test.SendPedAndCarToClient', src, NetworkGetNetworkIdFromEntity(carID), NetworkGetNetworkIdFromEntity(pedID))
-end)
-
 RegisterCommand('bloodbowl', function(source, args)
     local src = source
     local cars = {}
     local peds = {}
     for i,k in pairs(spawnCoords) do
         cars[i] = spawnVehicle('deviant', k.x, k.y, k.z, k.h, 0.0,0.0,false, true)
-        peds[i] = spawnPed(k)
-        SetPedIntoVehicle(peds[i], cars[i], -1)
-        TriggerClientEvent('test.SendPedAndCarToClient2', src, NetworkGetNetworkIdFromEntity(carID), NetworkGetNetworkIdFromEntity(pedID))
+        peds[i] ={
+            driver = spawnPed(k),
+            shotgun = spawnPed(k),
+        }
+        SetPedIntoVehicle(peds[i].driver, cars[i], -1)
+        SetPedIntoVehicle(peds[i].shotgun, cars[i], 0)
+        cars[i] =  NetworkGetNetworkIdFromEntity(cars[i])
+        peds[i].driver = NetworkGetNetworkIdFromEntity(peds[i].driver)
+        peds[i].shotgun = NetworkGetNetworkIdFromEntity(peds[i].shotgun)
     end
+    TriggerClientEvent('test.SendPedAndCarToClient2', src, cars, peds)
 end)
 
 
@@ -41,6 +38,7 @@ function spawnPed(coords)
     GiveWeaponToPed(ped, "weapon_microsmg", 9999, false, true)
     SetPedArmour(ped, 100)
     SetPedConfigFlag(ped, 185, true) --prevent auto shufle to driver seat
+    MarkServerEntityAsNoLongerNeeded(ped)
     return ped
 end
 
