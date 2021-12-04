@@ -28,6 +28,7 @@ AddEventHandler('BloodBowl.UpdateArenaData', function(_data)
         _panel.description = "Arena is offline."
     end
     if exports['critLobby']:LobbyMenuGetActiveMenu() == 'BloodBowl.MainMenu.main' then
+        ShowMainMenu(arenaData, false)
         TriggerEvent('lobbymenu:ReloadMenu')
     end
     TriggerEvent('bloodBowl.UpdateOutsidePanel', {name = _panel.name, rp = 1, cash = 1, belowMessage = _panel.belowMessage, playersReady = _panel.playersReady, description = _panel.description})

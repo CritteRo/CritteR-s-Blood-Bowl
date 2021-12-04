@@ -38,7 +38,7 @@ Citizen.CreateThread(function()
                 if insideThemarker == true then
                     alert(GetLabelText('CBB_ALERT_OPEN_OUTSIDE_MENU'))
                     if IsControlJustReleased(0, 23) then
-                        ShowMainMenu(arenaData)
+                        ShowMainMenu(arenaData, true)
                     end
                 end
             end
