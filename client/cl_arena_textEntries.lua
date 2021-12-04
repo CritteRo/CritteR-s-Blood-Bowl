@@ -4,6 +4,10 @@ TextEntries = {
     {"CBB_MENU_ALERT_YOU_NOT_READY", "You are not ready!"},
     {"CBB_MENU_ALERT_YOU_READY", "You are ready!"},
     {"CBB_MENU_ALERT_PLAYERS", "%i / %i Players"},
+    {"CBB_MENU_ALERT_START_GAME_LOCKED_1", "Waiting for other to become ready..."},
+    {"CBB_MENU_ALERT_START_GAME_LOCKED_2", "Not enough players to start..."},
+    {"CBB_MENU_ALERT_START_GAME_UNLOCKED", "Everyone's ready. Start the game!"},
+    {"CBB_MENU_ALERT_START_GAME_COUNTDOWN", "Game starts in %i seconds..."},
 }
 
 AddEventHandler('bloodBowl.GenerateTextEntries', function(_customEntries)

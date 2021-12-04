@@ -1,3 +1,5 @@
+isMenuShowing = false
+
 function ShowMainMenu(_data, _actuallyOpen)
     TriggerEvent('lobbymenu:CreateMenu', 'BloodBowl.MainMenu.main', "Blood Bowl", "Main Lobby.", "MENU", "PLAYERS", "DETAILS")
     TriggerEvent('lobbymenu:SetHeaderDetails', 'BloodBowl.MainMenu.main', true, true, 2, 6, 0)
@@ -22,22 +24,85 @@ function ShowMainMenu(_data, _actuallyOpen)
     
     TriggerEvent('lobbymenu:SetHeaderAlert', 'BloodBowl.MainMenu.main', 1, string.format(GetLabelText('CBB_MENU_ALERT_PLAYERS'), #_data.lobbyPlayers,_data.maxPlayers))
     local myLobbyId = -1
+    local allReady = true
     for i,k in pairs(_data.lobbyPlayers) do
-        if k.id == PlayerId() then --if it's me!
+        print(k.id.." / "..GetPlayerServerId(PlayerId()))
+        if k.id == GetPlayerServerId(PlayerId()) then --if it's me!
             myLobbyId = i
+        end
+        if k.ready == 0 then
+            allReady = false
         end
         TriggerEvent('lobbymenu:AddPlayer', 'BloodBowl.MainMenu.main', k.name, k.isHost, statusIdToUI[k.ready][1], 0, 0, true, statusIdToUI[k.ready][2], statusIdToUI[k.ready][2], true)
     end
 
     if myLobbyId ~= -1 then
-        if _data.lobbyPlayers[myLobbyId].isHost == true then
+        if _data.lobbyPlayers[myLobbyId].isHost == "HOST" then
+            TriggerEvent('lobbymenu:AddButton', 'BloodBowl.MainMenu.main', {button = "startGame", isHost = _data.lobbyPlayers[myLobbyId].isHost}, "Start Arena!", "", false, 0, "BloodBowl.Main.Menu.Button.Used")
+            if allReady == true and #_data.lobbyPlayers >= 3 then
+                TriggerEvent('lobbymenu:SetTooltipMessage', 'BloodBowl.MainMenu.main', GetLabelText('CBB_MENU_ALERT_START_GAME_UNLOCKED'))
+            elseif allReady == true and #_data.lobbyPlayers < 3 then
+                TriggerEvent('lobbymenu:SetTooltipMessage', 'BloodBowl.MainMenu.main', GetLabelText('CBB_MENU_ALERT_START_GAME_LOCKED_2'))
+            else
+                TriggerEvent('lobbymenu:SetTooltipMessage', 'BloodBowl.MainMenu.main', GetLabelText('CBB_MENU_ALERT_START_GAME_LOCKED_1'))
+            end
+        else
+            if _data.lobbyPlayers[myLobbyId].ready == 0 then
+                TriggerEvent('lobbymenu:AddButton', 'BloodBowl.MainMenu.main', {button = "ready", isHost = _data.lobbyPlayers[myLobbyId].isHost}, "I am ready!", "", false, 0, "BloodBowl.Main.Menu.Button.Used")
+                TriggerEvent('lobbymenu:SetTooltipMessage', 'BloodBowl.MainMenu.main', GetLabelText('CBB_MENU_ALERT_YOU_NOT_READY'))
+            else
+                TriggerEvent('lobbymenu:AddButton', 'BloodBowl.MainMenu.main', {button = "notReady", isHost = _data.lobbyPlayers[myLobbyId].isHost}, "I am NOT ready!", "", false, 0, "BloodBowl.Main.Menu.Button.Used")
+                TriggerEvent('lobbymenu:SetTooltipMessage', 'BloodBowl.MainMenu.main', GetLabelText('CBB_MENU_ALERT_YOU_READY'))
+            end
         end
     else
+        print('else')
     end
 
-    TriggerEvent('lobbymenu:AddButton', 'BloodBowl.MainMenu.main', {buttonID = "exit"}, "Exit", "", false, 0, "BloodBowl.Main.Menu.Button.Used")
+    if _data.status == 1 then
+        TriggerEvent('lobbymenu:SetTooltipMessage', 'BloodBowl.MainMenu.main', string.format(GetLabelText('CBB_MENU_ALERT_START_GAME_COUNTDOWN'), _data.startTimer))
+    end
+
+    TriggerEvent('lobbymenu:AddButton', 'BloodBowl.MainMenu.main', {button = "exit", isHost = 'na'}, "Exit", "", false, 0, "BloodBowl.Main.Menu.Button.Used")
 
     if _actuallyOpen == true then
         TriggerEvent('lobbymenu:OpenMenu', 'BloodBowl.MainMenu.main', true)
     end
 end
+
+AddEventHandler('lobbymenu:OpenMenu', function(_id, _unused)
+    if _id == 'BloodBowl.MainMenu.main' then
+        if isMenuShowing == false then
+            isMenuShowing = true
+            print('meme')
+            Citizen.Wait(200)
+            TriggerServerEvent('BloodBowl.PlayerOpenedMainMenu')
+        end
+    end
+end)
+
+AddEventHandler('lobbymenu:CloseMenu', function()
+    if exports['critLobby']:LobbyMenuGetActiveMenu() == 'BloodBowl.MainMenu.main' then
+        print('closed1')
+        if isMenuShowing == true then
+            isMenuShowing = false
+            TriggerServerEvent('BloodBowl.PlayerClosedMainMenu')
+        end
+    end
+end)
+
+AddEventHandler("BloodBowl.Main.Menu.Button.Used", function(_data)
+    local _buttonID = _data.button
+    local _isHost = _data.isHost
+    if _buttonID == 'ready' then
+        TriggerServerEvent('BloodBowl.SetReady')
+    elseif _buttonID == 'notReady' then
+        TriggerServerEvent('BloodBowl.SetReady')
+    elseif _buttonID == 'startGame' then
+        if _isHost == "HOST" and #arenaData.lobbyPlayers >= 1 then
+            TriggerServerEvent('BloodBowl.StartGameCountdown')
+        end
+    elseif _buttonID == 'exit' then
+        TriggerEvent('lobbymenu:CloseMenu')
+    end
+end)

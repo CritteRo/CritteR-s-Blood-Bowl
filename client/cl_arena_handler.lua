@@ -5,6 +5,7 @@ arenaData = { --this should be used only when
     spectatingPlayers = {}, --players "dead" during the round, 
     lobbyPlayers = {}, --all players, in the lobby.
     maxPlayers = 16,
+    startTimer = 30,
     gameData = {}, --depending on the type of gamemode, this should have some values here.
 }
 
@@ -22,12 +23,13 @@ AddEventHandler('BloodBowl.UpdateArenaData', function(_data)
         _panel.description = "Game in progress"
     end
     if arenaData.status == 1 then
-        _panel.description = "Game starting.."
+        _panel.description = string.format(GetLabelText('CBB_MENU_ALERT_START_GAME_COUNTDOWN'), _data.startTimer)
     end
     if arenaData.status == 4 then
         _panel.description = "Arena is offline."
     end
     if exports['critLobby']:LobbyMenuGetActiveMenu() == 'BloodBowl.MainMenu.main' then
+        Citizen.Wait(200) --a simple wait, because the frontend framework is slow
         ShowMainMenu(arenaData, false)
         TriggerEvent('lobbymenu:ReloadMenu')
     end
