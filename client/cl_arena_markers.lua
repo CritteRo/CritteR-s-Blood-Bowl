@@ -24,7 +24,7 @@ Citizen.CreateThread(function()
         local range = markerCoords['outsideArena'].range
         
         local dist = #(vector3(markerCoords['outsideArena'].x,markerCoords['outsideArena'].y,markerCoords['outsideArena'].z) - GetEntityCoords(ped))
-        if dist <= range then
+        if dist <= range-5 then
             insideThemarker = true
             canSeeTheMarker = true
         elseif dist <= range + 100 then
