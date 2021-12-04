@@ -17,3 +17,7 @@ client_scripts {
 server_scripts {
     ''
 }
+
+shared_scripts {
+    'shared/sh_arena_coords.lua',
+}

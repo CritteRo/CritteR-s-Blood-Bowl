@@ -1,6 +1,3 @@
-local markerCoords = {
-    ['outsideArena'] = {x = -265.402, y = -1912.376, z = 25.755, range = 10.05},
-}
 
 outsideScaleform = 0
 outsideScaleformData = {
@@ -16,14 +13,14 @@ Citizen.CreateThread(function()
     outsideScaleform = Scaleform.Request('MP_MISSION_NAME_FREEMODE')
     Scaleform.CallFunction(outsideScaleform, false, "SET_MISSION_INFO", outsideScaleformData.description, outsideScaleformData.name, "", '', outsideScaleformData.belowMessage, false, " "..outsideScaleformData.playersReady, outsideScaleformData.rp, outsideScaleformData.cash,"")
     TriggerEvent('bloodBowl.GenerateTextEntries')
-    setOutsideCheckpoint(47, markerCoords['outsideArena'].x, markerCoords['outsideArena'].y, markerCoords['outsideArena'].z, 0.0,0.0,0.0, markerCoords['outsideArena'].range, 255, 255, 190, 230)
+    setOutsideCheckpoint(47, arenaCoords['outsideArena'].x, arenaCoords['outsideArena'].y, arenaCoords['outsideArena'].z, 0.0,0.0,0.0, arenaCoords['outsideArena'].range, 255, 255, 190, 230)
     while true do --looking for the outside marker.
         local canSeeTheMarker = false
         local insideThemarker = false
         local ped = PlayerPedId()
-        local range = markerCoords['outsideArena'].range
+        local range = arenaCoords['outsideArena'].range
         
-        local dist = #(vector3(markerCoords['outsideArena'].x,markerCoords['outsideArena'].y,markerCoords['outsideArena'].z) - GetEntityCoords(ped))
+        local dist = #(vector3(arenaCoords['outsideArena'].x,arenaCoords['outsideArena'].y,arenaCoords['outsideArena'].z) - GetEntityCoords(ped))
         if dist <= range-5 then
             insideThemarker = true
             canSeeTheMarker = true
@@ -36,7 +33,7 @@ Citizen.CreateThread(function()
         if canSeeTheMarker == true then
             --show checkpoint scaleform here. Also show the Alert that tells you to press a button. AANNNDDDD handle the button press.
             local camcoord = GetFinalRenderedCamRot(2)
-            DrawScaleformMovie_3dSolid(outsideScaleform, markerCoords['outsideArena'].x, markerCoords['outsideArena'].y, markerCoords['outsideArena'].z+3, camcoord, 1.0, 1.0, 6.0, 6.0, 6.0, 100)
+            DrawScaleformMovie_3dSolid(outsideScaleform, arenaCoords['outsideArena'].x, arenaCoords['outsideArena'].y, arenaCoords['outsideArena'].z+3, camcoord, 1.0, 1.0, 6.0, 6.0, 6.0, 100)
             if insideThemarker == true then
                 alert(GetLabelText('CBB_ALERT_OPEN_OUTSIDE_MENU'))
                 if IsControlJustReleased(0, 23) then
