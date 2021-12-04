@@ -7,3 +7,28 @@ arenaData = { --this should be used only when
     maxPlayers = 16,
     gameData = {}, --depending on the type of gamemode, this should have some values here.
 }
+
+RegisterNetEvent('BloodBowl.UpdateArenaData')
+AddEventHandler('BloodBowl.UpdateArenaData', function(_data)
+    arenaData = _data
+    local _panel = {
+        name = "Blood Bowl: "..GameTypeToName[arenaData.type],
+        description = "Waiting for players",
+        playersReady = #arenaData.lobbyPlayers,
+        belowMessage = "",
+    }
+    if arenaData.status == 2 or arenaData.status == 3 then
+        _panel.playersReady = #arenaData.activePlayers + #arenaData.spectatingPlayers
+        _panel.description = "Game in progress"
+    end
+    if arenaData.status == 1 then
+        _panel.description = "Game starting.."
+    end
+    if arenaData.status == 4 then
+        _panel.description = "Arena is offline."
+    end
+    if exports['critLobby']:LobbyMenuGetActiveMenu() == 'BloodBowl.MainMenu.main' then
+        TriggerEvent('lobbymenu:ReloadMenu')
+    end
+    TriggerEvent('bloodBowl.UpdateOutsidePanel', {name = _panel.name, rp = 1, cash = 1, belowMessage = _panel.belowMessage, playersReady = _panel.playersReady, description = _panel.description})
+end)

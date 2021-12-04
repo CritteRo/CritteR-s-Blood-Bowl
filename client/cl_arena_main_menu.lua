@@ -19,8 +19,14 @@ function ShowMainMenu(_data)
         TriggerEvent('lobbymenu:AddDetailsRow', 'BloodBowl.MainMenu.main', "Longest lasting survivor wins.", "")
     end
     --TriggerEvent('lobbymenu:SetTextBoxToColumn', 'BloodBowl.MainMenu.main', 2, "Blood Bowl", "This should work as a description of the game mode, or maybe the user might want to add stats here, idk.", "")
-
+    
     TriggerEvent('lobbymenu:SetHeaderAlert', 'BloodBowl.MainMenu.main', 1, string.format(GetLabelText('CBB_MENU_ALERT_PLAYERS'), #_data.lobbyPlayers,_data.maxPlayers))
+    local myLobbyId = 0
+    for i,k in pairs(_data.lobbyPlayers) do
+        --if k.name == GetPlayerName() then
+        TriggerEvent('lobbymenu:AddPlayer', 'BloodBowl.MainMenu.main', k.name, k.isHost, statusIdToUI[k.ready][1], 0, 0, true, statusIdToUI[k.ready][2], statusIdToUI[k.ready][2], true)
+    end
+
 
     TriggerEvent('lobbymenu:AddButton', 'BloodBowl.MainMenu.main', {}, "Exit", "", false, 0, "event")
 

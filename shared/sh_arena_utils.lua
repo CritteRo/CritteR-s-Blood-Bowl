@@ -21,3 +21,14 @@ spawnCoords = {
     [18] = {x = 2825.049, y = -3693.36, z = 139.417, h = 178.988},
     [19] = {x = 2835.049, y = -3693.36, z = 139.417, h = 178.988},
 }
+
+GameTypeToName = {
+    [0] = "Original",
+    [1] = "Infected",
+    [2] = "Capture the Flag",
+}
+
+statusIdToUI = {
+    [0] = {"NOT READY", 6},
+    [1] = {"READY", 18}
+}

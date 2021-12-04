@@ -8,7 +8,7 @@ serverArena = {
     gameData = {}, --depending on the type of gamemode, this should have some values here.
 }
 
-lobbyPlayerData = {id = 0, name = "PlayerName", ready = false} --player data used by players in "lobbyPlayers"
+lobbyPlayerData = {id = 0, name = "PlayerName", ready = 0, isHost = "HOST"} --player data used by players in "lobbyPlayers"
 
 originalGameData = {
     status = 0, --0 = Open, waiting for players, 1 = starting, 2 = in game, 3 = ending, 4 = offline
@@ -33,7 +33,7 @@ serverPlayers = {
 }
 
 function CreateNewPlayerData(srcID)
-    serverPlayers[src] = {
+    serverPlayers[srcID] = {
         srcID = srcID,
         name = GetPlayerName(srcID),
         inArena = -1, -- -1 = false, 0 or more = gameID
@@ -64,7 +64,7 @@ AddEventHandler('playerDropped', function(reason) --cleaning the players table, 
                 if serverArena.status == 0 or serverArena.status == 1 then -- if everyone is still in lobby, remove them from the lobby.
                     serverArena.lobbyPlayers[src] = nil
                     serverPlayers[src] = nil
-                elseif serverArena.status == 2 or serverArena.status == 3 -- if people are in-game, remove them from the game.
+                elseif serverArena.status == 2 or serverArena.status == 3 then-- if people are in-game, remove them from the game.
                     if serverArena.activePlayers[src] ~= nil then
                         serverArena.activePlayers[src] = nil
                     elseif serverArena.spectatingPlayers[src] ~= nil then
@@ -85,24 +85,26 @@ function forceRestartArena(isSilent, isExpected, closeArenaAfterRestart, gameTyp
     --gameID would not be used for now. But in case I decide to add multiple arenas..it can.
     --gameType is the gamemode type that will use when the arena restarts.
     for i,k in pairs(serverPlayers) do
-        if k.inArena ~= -1 and k.inArena == serverArena.gameData.gameID then
-            serverPlayers[i].inArena = -1
-            local ped = GetPlayerPed(i)
-            SetEntityCoords(ped, arenaCoords['outsideArena'].x, arenaCoords['outsideArena'].y, arenaCoords['outsideArena'].z, false, true, false, false)
-            if isSilent == false then
-                if isExpected == true then
-                    TriggerClientEvent('BloodBowl.Show_UI_Element', i, "notify", "[~r~Blood Bowl~s~] The arena has ended.")
-                else
-                    TriggerClientEvent('BloodBowl.Show_UI_Element', i, "notify", "[~r~Blood Bowl~s~] An unexpected error ended the arena.")
+        if tonumber(i) > 0 then
+            if k.inArena ~= -1 and k.inArena == serverArena.gameData.gameID then
+                serverPlayers[i].inArena = -1
+                local ped = GetPlayerPed(i)
+                SetEntityCoords(ped, arenaCoords['outsideArena'].x, arenaCoords['outsideArena'].y, arenaCoords['outsideArena'].z, false, true, false, false)
+                if isSilent == false then
+                    if isExpected == true then
+                        TriggerClientEvent('BloodBowl.Show_UI_Element', i, "notify", "[~r~Blood Bowl~s~] The arena has ended.")
+                    else
+                        TriggerClientEvent('BloodBowl.Show_UI_Element', i, "notify", "[~r~Blood Bowl~s~] An unexpected error ended the arena.")
+                    end
                 end
             end
-        end
-        if isSilent == false and isExpected == true and k.showNotifications == true then
-            TriggerClientEvent('BloodBowl.Show_UI_Element', i, "notify", "[~r~Blood Bowl~s~] The arena has ended.")
+            if isSilent == false and isExpected == true and k.showNotifications == true then
+                TriggerClientEvent('BloodBowl.Show_UI_Element', k.srcID, "notify", "[~r~Blood Bowl~s~] The arena has ended.")
+            end
         end
     end
 
-    if gametType == 0 then
+    if gameType == 0 then
         serverArena = originalGameData
     else
         print('WARNING: USED WRONG GAMETYPE IN forceRestartArena. :: sv_arena_handler.lua')
@@ -113,3 +115,7 @@ function forceRestartArena(isSilent, isExpected, closeArenaAfterRestart, gameTyp
 
     TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
 end
+
+RegisterCommand('newarena', function(source, args)
+    forceRestartArena(false, true, false, 0, 0)
+end)

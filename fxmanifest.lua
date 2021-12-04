@@ -15,9 +15,9 @@ client_scripts {
 }
 
 server_scripts {
-    ''
+    'server/sv_arena_handler.lua',
 }
 
 shared_scripts {
-    'shared/sh_arena_coords.lua',
+    'shared/sh_arena_utils.lua',
 }
