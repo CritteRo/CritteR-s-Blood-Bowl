@@ -3,7 +3,7 @@ TextEntries = {
     {"CBB_ALERT_OPEN_OUTSIDE_MENU", "Press ~INPUT_ENTER~ to open the ~y~Blood Bowl~s~ menu."},
     {"CBB_MENU_ALERT_YOU_NOT_READY", "You are not ready!"},
     {"CBB_MENU_ALERT_YOU_READY", "You are ready!"},
-    {"CBB_MENU_ALERT_OTHERS_READY", "%i / %i Players ready."},
+    {"CBB_MENU_ALERT_PLAYERS", "%i / %i Players"},
 }
 
 AddEventHandler('bloodBowl.GenerateTextEntries', function(_customEntries)

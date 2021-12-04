@@ -4,4 +4,6 @@ arenaData = { --this should be used only when
     activePlayers = {}, --players alive during the round.
     spectatingPlayers = {}, --players "dead" during the round, 
     lobbyPlayers = {}, --all players, in the lobby.
+    maxPlayers = 16,
+    gameData = {}, --depending on the type of gamemode, this should have some values here.
 }
