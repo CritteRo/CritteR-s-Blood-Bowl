@@ -38,13 +38,23 @@ end
 
 --------------
 outsidecheckpoint = 0
+repaircheckpoint = 0
+pointcheckpoint = 0
 
-function setOutsideCheckpoint(_type, _x1, _y1, _z1, _x2, _y2, _z2, _radious, _r, _g, _b, _a)
-    DeleteCheckpoint(outsidecheckpoint)
-    outsidecheckpoint = CreateCheckpoint(_type, _x1, _y1, _z1, _x2, _y2, _z2, _radious, _r, _g, _b, _a, 0)
-
-    SetCheckpointCylinderHeight(outsidecheckpoint, 3.01, 3.01, 3.01)
-    --SetCheckpointIconRgba(outsidecheckpoint, 0, 175, 255, 130)
+function setCheckpoint(_purpose, _type, _x1, _y1, _z1, _x2, _y2, _z2, _radious, _r, _g, _b, _a)
+    if _purpose == "outside" then
+        DeleteCheckpoint(outsidecheckpoint)
+        outsidecheckpoint = CreateCheckpoint(_type, _x1, _y1, _z1, _x2, _y2, _z2, _radious, _r, _g, _b, _a, 0)
+        SetCheckpointCylinderHeight(outsidecheckpoint, 3.01, 3.01, 3.01)
+    elseif _purpose == "points" then
+        DeleteCheckpoint(pointcheckpoint)
+        pointcheckpoint = CreateCheckpoint(_type, _x1, _y1, _z1, _x2, _y2, _z2, _radious, _r, _g, _b, _a, 0)
+        SetCheckpointCylinderHeight(pointcheckpoint, 3.01, 10.01, 10.01)
+    elseif _purpose == "repair" then
+        DeleteCheckpoint(repaircheckpoint)
+        repaircheckpoint = CreateCheckpoint(_type, _x1, _y1, _z1, _x2, _y2, _z2, _radious, _r, _g, _b, _a, 0)
+        SetCheckpointCylinderHeight(repaircheckpoint, 3.01, 10.01, 10.01)
+    end
 end
 
 function notify(string, colID)

@@ -13,7 +13,7 @@ Citizen.CreateThread(function()
     outsideScaleform = Scaleform.Request('MP_MISSION_NAME_FREEMODE')
     Scaleform.CallFunction(outsideScaleform, false, "SET_MISSION_INFO", outsideScaleformData.description, outsideScaleformData.name, "", '', outsideScaleformData.belowMessage, false, " "..outsideScaleformData.playersReady, outsideScaleformData.rp, outsideScaleformData.cash,"")
     TriggerEvent('bloodBowl.GenerateTextEntries')
-    setOutsideCheckpoint(47, arenaCoords['outsideArena'].x, arenaCoords['outsideArena'].y, arenaCoords['outsideArena'].z, 0.0,0.0,0.0, arenaCoords['outsideArena'].range, 255, 255, 190, 230)
+    setCheckpoint("outside", 47, arenaCoords['outsideArena'].x, arenaCoords['outsideArena'].y, arenaCoords['outsideArena'].z, 0.0,0.0,0.0, arenaCoords['outsideArena'].range, 255, 255, 190, 230)
     while true do --looking for the outside marker.
         local canSeeTheMarker = false
         local insideThemarker = false
