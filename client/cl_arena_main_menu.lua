@@ -30,7 +30,8 @@ function ShowMainMenu(_data, _actuallyOpen)
     end
 
     if myLobbyId ~= -1 then
-        if _data.lobbyPlayers[myLobbyId].isHost == true
+        if _data.lobbyPlayers[myLobbyId].isHost == true then
+        end
     else
     end
 
