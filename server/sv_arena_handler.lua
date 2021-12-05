@@ -1,5 +1,7 @@
 SetRoutingBucketEntityLockdownMode(0, "strict") --only for testing.
 
+gameCars = {} --table to keep all game cars
+gameCopilots = {} --table to keep all game copilots
 
 serverArena = { 
     status = 0, --0 = Open, waiting for players, 1 = starting, 2 = in game, 3 = ending, 4 = offline
@@ -21,10 +23,10 @@ originalGameData = {
     spectatingPlayers = {}, --players "dead" during the round, 
     lobbyPlayers = {}, --all players, in the lobby.
     maxPlayers = 16,
-    startTimer = 30, --timer, in seconds, from when HOST player presses on Start.
+    startTimer = 10, --timer, in seconds, from when HOST player presses on Start.
     gameData = {timeLeft = GetGameTimer() + 900000 --[[15 minutes]], gameID = math.random(1,999999999)},
 }
-originalPlayerData = {id = 0, name = "PlayerName", score = 30, checkpointsUsed = 0, repairsUsed = 0} --player data used by players in the original blood bowl.
+originalPlayerData = {id = 0, name = "PlayerName", score = 30, checkpointsUsed = 0, repairsUsed = 0, finishedIntro = false} --player data used by players in the original blood bowl.
 
 serverPlayers = {
     [0] = {
@@ -57,6 +59,7 @@ AddEventHandler('onResourceStart', function(_name) --make sure we register ALL O
     if _name == GetCurrentResourceName() then
         for _,src in ipairs(GetPlayers()) do
             CreateNewPlayerData(src)
+            print(serverPlayers[src].inArena)
         end
     end
 end)
@@ -89,12 +92,14 @@ end)
 function forceRestartArena(isSilent, isExpected, closeArenaAfterRestart, gameType, gameID)
     --gameID would not be used for now. But in case I decide to add multiple arenas..it can.
     --gameType is the gamemode type that will use when the arena restarts.
+    RunEntityCleanup(true)
     for i,k in pairs(serverPlayers) do
+        print(i)
         if tonumber(i) > 0 then
             if k.inArena ~= -1 and k.inArena == serverArena.gameData.gameID then
                 serverPlayers[i].inArena = -1
                 local ped = GetPlayerPed(i)
-                SetEntityCoords(ped, arenaCoords['outsideArena'].x, arenaCoords['outsideArena'].y, arenaCoords['outsideArena'].z, false, true, false, false)
+                SetEntityCoords(ped, arenaCoords['outsideArena'].x , arenaCoords['outsideArena'].y, arenaCoords['outsideArena'].z, false, true, false, false)
                 if isSilent == false then
                     if isExpected == true then
                         TriggerClientEvent('BloodBowl.Show_UI_Element', i, "notify", "[~r~Blood Bowl~s~] The arena has ended.")
@@ -114,6 +119,9 @@ function forceRestartArena(isSilent, isExpected, closeArenaAfterRestart, gameTyp
     else
         print('WARNING: USED WRONG GAMETYPE IN forceRestartArena. :: sv_arena_handler.lua')
     end
+    serverArena.status = 0
+    serverArena.lobbyPlayers = {}
+    serverArena.activePlayers = {}
     if closeArenaAfterRestart == true then
         serverArena.status = 4
     end
@@ -253,6 +261,39 @@ AddEventHandler('BloodBowl.PlayerClosedMainMenu', function(_isBot)
     end
 end)
 
+AddEventHandler('BloodBowl.StartGame', function()
+    if serverArena.status == 1 and serverArena.startTimer <= 0 then
+        serverArena.status = 2
+        local _pData = originalPlayerData
+        for i,k in pairs(serverArena.lobbyPlayers) do
+            serverArena.activePlayers[i] = _pData
+            serverArena.activePlayers[i].name = k.name
+            serverArena.activePlayers[i].id = k.id
+        end
+        serverArena.lobbyPlayers = {}
+        local rows = 1
+        for i,k in pairs(serverArena.activePlayers) do
+            setPlayerInArena(k.id)
+            gameCars[rows] = CreateArenaVehicle("deviant", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
+            gameCopilots[rows] = CreateCopilot(spawnCoords[rows])
+            SetPedIntoVehicle(GetPlayerPed(tonumber(k.id)), gameCars[rows], -1)
+            SetPedIntoVehicle(gameCopilots[rows], gameCars[rows], 0)
+            FreezeEntityPosition(gameCars[rows], true)
+            rows = rows + 1
+            TriggerClientEvent('BloodBowl.StartIntro', k.id, serverArena.type)
+        end
+    end
+end)
+
+function setPlayerInArena(_pID)
+    for i,k in pairs(serverPlayers) do -- WHY DOESN'T THIS PIECE OF SHIT TABLE WORK OTHERWISE?????!?!?!?!?!
+        if k.name == GetPlayerName(tonumber(_pID)) then
+            serverPlayers[i].inArena = serverArena.gameData.gameID
+        end
+    end
+    --serverPlayers[tonumber(_pID)].inArena = serverArena.gameData.gameID
+end
+
 RegisterCommand('forceUpdate', function(source, args)
     TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
 end)
@@ -265,6 +306,12 @@ RegisterCommand('joinbot', function(source, args)
         print('bot '.._botID..' joined the arena')
     else
         print('invalid bot id')
+    end
+end)
+
+RegisterCommand('players', function()
+    for i,k in pairs(serverPlayers) do
+        print(i.." / "..k.name.." / "..k.inArena)
     end
 end)
 

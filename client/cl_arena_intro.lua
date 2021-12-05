@@ -10,6 +10,21 @@ camCoords = {
     }
 }
 
+local testMessages = {
+    [1] = "Your overall score starts at ~r~30~s~ and counts down.",
+    [2] = "Drive through the ~r~red checkpoints~s~ to increase your overall score.",
+    [3] = 'The ~b~blue checkpoints~s~ will repair your vehicle.',
+    [4] = "The current Target Score to win the Blood Ring is 100.",
+    [5] = "Get your overall score above the Target Score to win!",
+    [6] = "You will lose if your overall score reaches zero.",
+}
+
+RegisterNetEvent('BloodBowl.StartIntro')
+AddEventHandler('BloodBowl.StartIntro', function(_aID)
+    TriggerEvent('lobbymenu:CloseMenu')
+    showArenaIntro(_aID, testMessages)
+end)
+
 function showArenaIntro(_aID, _messages)
     local cams = {}
     local row = 1
@@ -61,14 +76,6 @@ function showArenaIntro(_aID, _messages)
         DestroyCam(k.handle, false)
     end
 end
-local testMessages = {
-    [1] = "Your overall score starts at ~r~30~s~ and counts down.",
-    [2] = "Drive through the ~r~red checkpoints~s~ to increase your overall score.",
-    [3] = 'The ~b~blue checkpoints~s~ will repair your vehicle.',
-    [4] = "The current Target Score to win the Blood Ring is 100.",
-    [5] = "Get your overall score above the Target Score to win!",
-    [6] = "You will lose if your overall score reaches zero.",
-}
 
 RegisterCommand('showIntro', function()
     showArenaIntro(0, testMessages)

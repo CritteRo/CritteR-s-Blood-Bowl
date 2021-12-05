@@ -1,7 +1,7 @@
 local carID = 0
 local pedID = 0
 
-AddEventHandler('test.CreateGroups', function()
+AddEventHandler('BloodBowl.CreateGroups', function()
     AddRelationshipGroup('GROUP_BLOODBOWL_TEST_1')
     AddRelationshipGroup('GROUP_BLOODBOWL_TEST_2')
     AddRelationshipGroup('GROUP_BLOODBOWL_TEST_3')
@@ -30,7 +30,7 @@ AddEventHandler('test.CreateGroups', function()
     end
 end)
 
-TriggerEvent('test.CreateGroups')
+TriggerEvent('BloodBowl.CreateGroups')
 
 
 RegisterCommand('day', function()
