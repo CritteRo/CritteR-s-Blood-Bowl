@@ -9,6 +9,8 @@ arenaData = { --this should be used only when
     gameData = {}, --depending on the type of gamemode, this should have some values here.
 }
 
+TriggerServerEvent('BloodBowl.RequestInitialArenaData')
+
 RegisterNetEvent('BloodBowl.UpdateArenaData')
 AddEventHandler('BloodBowl.UpdateArenaData', function(_data)
     arenaData = _data

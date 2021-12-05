@@ -56,24 +56,3 @@ function setCheckpoint(_purpose, _type, _x1, _y1, _z1, _x2, _y2, _z2, _radious, 
         SetCheckpointCylinderHeight(repaircheckpoint, 3.01, 10.01, 10.01)
     end
 end
-
-function notify(string, colID)
-    if colID ~= nil then
-        ThefeedSetNextPostBackgroundColor(colID)
-    end
-    BeginTextCommandThefeedPost("STRING")
-    AddTextComponentSubstringPlayerName(string)
-    EndTextCommandThefeedPostTicker(true, true)
-end
-
-function caption(text, ms)
-    BeginTextCommandPrint("string")
-    AddTextComponentSubstringPlayerName(text)
-    EndTextCommandPrint(ms, 1)
-end
-
-function alert(text)
-    SetTextComponentFormat("STRING")
-    AddTextComponentString(text)
-    DisplayHelpTextFromStringLabel(0,0,1,-1)
-end

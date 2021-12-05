@@ -12,6 +12,7 @@ client_scripts {
     'client/cl_arena_main_menu.lua',
     'client/cl_arena_markers.lua',
     'client/cl_arena_intro.lua',
+    'client/cl_arena_ui.lua',
     'client/cl_ai_test.lua',
 }
 

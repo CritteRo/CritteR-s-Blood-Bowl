@@ -10,7 +10,7 @@ serverArena = {
     spectatingPlayers = {}, --players "dead" during the round, 
     lobbyPlayers = {}, --all players, in the lobby.
     maxPlayers = 16,
-    startTimer = 30, --timer, in seconds, from when HOST player presses on Start.
+    startTimer = 10, --timer, in seconds, from when HOST player presses on Start.
     gameData = {}, --depending on the type of gamemode, this should have some values here.
 }
 
@@ -24,7 +24,7 @@ originalGameData = {
     lobbyPlayers = {}, --all players, in the lobby.
     maxPlayers = 16,
     startTimer = 10, --timer, in seconds, from when HOST player presses on Start.
-    gameData = {timeLeft = GetGameTimer() + 900000 --[[15 minutes]], gameID = math.random(1,999999999)},
+    gameData = {timeLeft = GetGameTimer() + 900000 --[[15 minutes]], gameID = math.random(1,999999999), isEveryoneReady = false, maxPoints = 100},
 }
 originalPlayerData = {id = 0, name = "PlayerName", score = 30, checkpointsUsed = 0, repairsUsed = 0, finishedIntro = false} --player data used by players in the original blood bowl.
 
@@ -116,6 +116,7 @@ function forceRestartArena(isSilent, isExpected, closeArenaAfterRestart, gameTyp
 
     if gameType == 0 then
         serverArena = originalGameData
+        serverArena.gameData.gameID = math.random(1,999999999)
     else
         print('WARNING: USED WRONG GAMETYPE IN forceRestartArena. :: sv_arena_handler.lua')
     end
@@ -282,7 +283,67 @@ AddEventHandler('BloodBowl.StartGame', function()
             rows = rows + 1
             TriggerClientEvent('BloodBowl.StartIntro', k.id, serverArena.type)
         end
+        local gameID = serverArena.gameData.gameID
+        while serverArena.status == 2 and gameID == serverArena.gameData.gameID do --wait for everyone to watch the intro..
+            local allReady = true
+            for i,k in pairs(serverArena.activePlayers) do
+                if k.finishedIntro == false then
+                    allReady = false
+                end
+            end
+            if allReady == true then
+                serverArena.gameData.isEveryoneReady = true
+                TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
+                break
+            end
+            Citizen.Wait(200) --we are running a loop here, so checking it every frame might not be that good of an ideea.
+        end
+
+        for i,k in pairs(serverArena.activePlayers) do
+            TriggerClientEvent("cS.Countdown", tonumber(k.id), 0, 150, 200, 5, true)
+        end
+
+        Citizen.Wait(5000)
+
+        for i,k in pairs(gameCars) do
+            FreezeEntityPosition(k, false)
+        end
+
+        while serverArena.status == 2 and gameID == serverArena.gameData.gameID do --main game loop. Removes one point every second.
+            if serverArena.type == 0 then
+                --todo
+                for i,k in pairs(serverArena.activePlayers) do
+                    if k.score > 0 then
+                        TriggerClientEvent('BloodBowl.Show_UI_Element',tonumber(k.id), "caption", "Your score: ~r~"..(k.score - 1).."~s~ / "..serverArena.gameData.maxPoints..".", 1005)
+                        serverArena.activePlayers[i].score = serverArena.activePlayers[i].score - 1
+                    end
+                end
+            end
+            Citizen.Wait(1000)
+        end
     end
+end)
+
+RegisterNetEvent('BloodBowl.FinishedIntro')
+AddEventHandler('BloodBowl.FinishedIntro', function()
+    local src = source
+    if serverArena.status == 2 and GetPlayerInArenaValue(src) == serverArena.gameData.gameID then
+        if serverArena.gameData.isEveryoneReady == false then
+            for i,k in pairs(serverArena.activePlayers) do
+                if tonumber(k.id) == src then
+                    serverArena.activePlayers[i].finishedIntro = true
+                    TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
+                end
+            end
+        end
+    end
+end)
+
+
+RegisterNetEvent('BloodBowl.RequestInitialArenaData')
+AddEventHandler('BloodBowl.RequestInitialArenaData', function()
+    local src = source
+    TriggerClientEvent('BloodBowl.UpdateArenaData', src, serverArena)
 end)
 
 function setPlayerInArena(_pID)
@@ -292,6 +353,17 @@ function setPlayerInArena(_pID)
         end
     end
     --serverPlayers[tonumber(_pID)].inArena = serverArena.gameData.gameID
+end
+
+function GetPlayerInArenaValue(_pID)
+    local data = -2
+    for i,k in pairs(serverPlayers) do -- WHY DOESN'T THIS PIECE OF SHIT TABLE WORK OTHERWISE?????!?!?!?!?!
+        if k.name == GetPlayerName(tonumber(_pID)) then
+            data = k.inArena 
+            break
+        end
+    end
+    return data
 end
 
 RegisterCommand('forceUpdate', function(source, args)

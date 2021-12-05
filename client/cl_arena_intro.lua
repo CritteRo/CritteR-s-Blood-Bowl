@@ -19,6 +19,19 @@ local testMessages = {
     [6] = "You will lose if your overall score reaches zero.",
 }
 
+local showingIntro = false
+
+Citizen.CreateThread(function()
+    while true do
+        if arenaData.gameData.isEveryoneReady == false and arenaData.status == 2 and showingIntro == false then
+            caption("Waiting for others to join...", 10)
+            Citizen.Wait(10)
+        else
+            Citizen.Wait(200)
+        end
+    end
+end)
+
 RegisterNetEvent('BloodBowl.StartIntro')
 AddEventHandler('BloodBowl.StartIntro', function(_aID)
     TriggerEvent('lobbymenu:CloseMenu')
@@ -53,6 +66,7 @@ function showArenaIntro(_aID, _messages)
 
     SetCamActive(cams[1].handle, true)
     RenderScriptCams(true, false, 0, true, false)
+    showingIntro = true
 
     for i,k in pairs(cams) do
         local _,int = math.modf(i/2)
@@ -72,6 +86,8 @@ function showArenaIntro(_aID, _messages)
     SetEntityInvincible(ped, false)
     ClearFocus()
     RenderScriptCams(false, false, 0, true, false)
+    showingIntro = false
+    TriggerServerEvent('BloodBowl.FinishedIntro')
     for i,k in pairs(cams) do
         DestroyCam(k.handle, false)
     end
