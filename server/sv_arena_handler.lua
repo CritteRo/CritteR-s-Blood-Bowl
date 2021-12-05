@@ -1,3 +1,6 @@
+SetRoutingBucketEntityLockdownMode(0, "strict") --only for testing.
+
+
 serverArena = { 
     status = 0, --0 = Open, waiting for players, 1 = starting, 2 = in game, 3 = ending, 4 = offline
     type = 0, --0 = original, 1 = infected, 2 = capture the flag.
@@ -243,7 +246,8 @@ AddEventHandler('BloodBowl.PlayerClosedMainMenu', function(_isBot)
                 serverArena.status = 0
                 serverArena.startTimer = 30
             end
-            serverArena.lobbyPlayers[myPlace] = nil
+            --serverArena.lobbyPlayers[myPlace] = nil
+            table.remove(serverArena.lobbyPlayers, myPlace)
             TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
         end
     end

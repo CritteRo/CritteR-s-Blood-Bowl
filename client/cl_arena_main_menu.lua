@@ -25,6 +25,7 @@ function ShowMainMenu(_data, _actuallyOpen)
     TriggerEvent('lobbymenu:SetHeaderAlert', 'BloodBowl.MainMenu.main', 1, string.format(GetLabelText('CBB_MENU_ALERT_PLAYERS'), #_data.lobbyPlayers,_data.maxPlayers))
     local myLobbyId = -1
     local allReady = true
+    local playerRows = 1
     for i,k in pairs(_data.lobbyPlayers) do
         print(k.id.." / "..GetPlayerServerId(PlayerId()))
         if k.id == GetPlayerServerId(PlayerId()) then --if it's me!
@@ -34,6 +35,11 @@ function ShowMainMenu(_data, _actuallyOpen)
             allReady = false
         end
         TriggerEvent('lobbymenu:AddPlayer', 'BloodBowl.MainMenu.main', k.name, k.isHost, statusIdToUI[k.ready][1], 0, 0, true, statusIdToUI[k.ready][2], statusIdToUI[k.ready][2], true)
+        playerRows = playerRows + 1
+    end
+
+    for i=0,16-playerRows do --fill the player list with blanks.
+        TriggerEvent('lobbymenu:AddPlayer', 'BloodBowl.MainMenu.main', "FREE SLOT", "", "", 0, 0, true, 2, 2, true)
     end
 
     if myLobbyId ~= -1 then
@@ -61,6 +67,10 @@ function ShowMainMenu(_data, _actuallyOpen)
 
     if _data.status == 1 then
         TriggerEvent('lobbymenu:SetTooltipMessage', 'BloodBowl.MainMenu.main', string.format(GetLabelText('CBB_MENU_ALERT_START_GAME_COUNTDOWN'), _data.startTimer))
+    elseif _data.status == 2 or _data.status == 3 then
+        TriggerEvent('lobbymenu:SetWarningMessage', 'BloodBowl.MainMenu.main', true, "WARNING", "Another arena is currently ongoing.", "")
+    elseif _data.status == 4 then
+        TriggerEvent('lobbymenu:SetWarningMessage', 'BloodBowl.MainMenu.main', true, "WARNING", "You cannot join the arena at this time.", "")
     end
 
     TriggerEvent('lobbymenu:AddButton', 'BloodBowl.MainMenu.main', {button = "exit", isHost = 'na'}, "Exit", "", false, 0, "BloodBowl.Main.Menu.Button.Used")

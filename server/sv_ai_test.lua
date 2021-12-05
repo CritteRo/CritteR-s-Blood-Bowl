@@ -3,7 +3,7 @@ RegisterCommand('bloodbowl', function(source, args)
     local cars = {}
     local peds = {}
     for i,k in pairs(spawnCoords) do
-        cars[i] = spawnVehicle('deviant', k.x, k.y, k.z, k.h, 0.0,0.0,false, true)
+        cars[i] = spawnVehicle('deviant', k.x, k.y, k.z, k.h, 0.0,0.0,false, false)
         peds[i] ={
             driver = spawnPed(k),
             shotgun = spawnPed(k),
@@ -38,7 +38,7 @@ function spawnPed(coords)
     GiveWeaponToPed(ped, "weapon_microsmg", 9999, false, true)
     SetPedArmour(ped, 100)
     SetPedConfigFlag(ped, 185, true) --prevent auto shufle to driver seat
-    MarkServerEntityAsNoLongerNeeded(ped)
+    --MarkServerEntityAsNoLongerNeeded(ped)
     return ped
 end
 
