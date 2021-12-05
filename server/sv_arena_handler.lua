@@ -123,8 +123,12 @@ RegisterCommand('newarena', function(source, args)
 end)
 
 RegisterNetEvent('BloodBowl.SetReady')
-AddEventHandler('BloodBowl.SetReady', function(_bool)
+AddEventHandler('BloodBowl.SetReady', function(_bool, _isBot)
     local src = source
+    if _isBot ~= nil and _isBot ~= false then
+        src = tonumber(_isBot)
+        _name = "Bot "..src..""
+    end
     local myPlace = nil
     if serverArena.status == 0 or serverArena.status == 1 then
         --check for my place
@@ -183,11 +187,16 @@ AddEventHandler('BloodBowl.StartGameCountdown', function()
 end)
 
 RegisterNetEvent('BloodBowl.PlayerOpenedMainMenu')
-AddEventHandler('BloodBowl.PlayerOpenedMainMenu', function()
+AddEventHandler('BloodBowl.PlayerOpenedMainMenu', function(_isBot)
     local src = source
+    local _name = GetPlayerName(src)
+    if _isBot ~= nil and _isBot ~= false then
+        src = tonumber(_isBot)
+        _name = "Bot "..src..""
+    end
     if serverArena.status == 1 or serverArena.status == 0 then
         if #serverArena.lobbyPlayers < serverArena.maxPlayers then
-            local _data = {id = src, name = GetPlayerName(src), ready = 0, isHost = ""}
+            local _data = {id = src, name = _name, ready = 0, isHost = ""}
             if #serverArena.lobbyPlayers == 0 then
                 _data.isHost = "HOST"
                 _data.ready = 1
@@ -204,8 +213,13 @@ AddEventHandler('BloodBowl.PlayerOpenedMainMenu', function()
 end)
 
 RegisterNetEvent('BloodBowl.PlayerClosedMainMenu')
-AddEventHandler('BloodBowl.PlayerClosedMainMenu', function()
+AddEventHandler('BloodBowl.PlayerClosedMainMenu', function(_isBot)
     local src = source
+    local _name = GetPlayerName(src)
+    if _isBot ~= nil and _isBot ~= false then
+        src = tonumber(_isBot)
+        _name = "Bot "..src..""
+    end
     if serverArena.status == 1 or serverArena.status == 0 then
         --look for the player in lobby.
         local myPlace = nil
@@ -237,4 +251,37 @@ end)
 
 RegisterCommand('forceUpdate', function(source, args)
     TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
+end)
+
+RegisterCommand('joinbot', function(source, args)
+    local _botID = nil
+    if args[1] ~= nil and tonumber(args[1]) ~= nil then
+        _botID = tonumber(args[1])
+        TriggerEvent('BloodBowl.PlayerOpenedMainMenu', _botID)
+        print('bot '.._botID..' joined the arena')
+    else
+        print('invalid bot id')
+    end
+end)
+
+RegisterCommand('leavebot', function(source, args)
+    local _botID = nil
+    if args[1] ~= nil and tonumber(args[1]) ~= nil then
+        _botID = tonumber(args[1])
+        TriggerEvent('BloodBowl.PlayerClosedMainMenu', _botID)
+        print('bot '.._botID..' left the arena')
+    else
+        print('invalid bot id')
+    end
+end)
+
+RegisterCommand('readybot', function(source, args)
+    local _botID = nil
+    if args[1] ~= nil and tonumber(args[1]) ~= nil then
+        _botID = tonumber(args[1])
+        TriggerEvent('BloodBowl.SetReady', true, _botID)
+        print('bot '.._botID..' toggled ready')
+    else
+        print('invalid bot id')
+    end
 end)
