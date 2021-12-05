@@ -115,8 +115,19 @@ function forceRestartArena(isSilent, isExpected, closeArenaAfterRestart, gameTyp
     end
 
     if gameType == 0 then
-        serverArena = originalGameData
+        --serverArena = originalGameData
+        serverArena = {
+            status = 0, --0 = Open, waiting for players, 1 = starting, 2 = in game, 3 = ending, 4 = offline
+            type = 0, --0 = original, 1 = infected, 2 = capture the flag.
+            activePlayers = {}, --players alive during the round.
+            spectatingPlayers = {}, --players "dead" during the round, 
+            lobbyPlayers = {}, --all players, in the lobby.
+            maxPlayers = 16,
+            startTimer = 10, --timer, in seconds, from when HOST player presses on Start.
+            gameData = {timeLeft = GetGameTimer() + 900000 --[[15 minutes]], gameID = math.random(1,999999999), isEveryoneReady = false, maxPoints = 100},
+        }
         serverArena.gameData.gameID = math.random(1,999999999)
+        print(serverArena.startTimer.. " against "..originalGameData.startTimer)
     else
         print('WARNING: USED WRONG GAMETYPE IN forceRestartArena. :: sv_arena_handler.lua')
     end
@@ -127,6 +138,7 @@ function forceRestartArena(isSilent, isExpected, closeArenaAfterRestart, gameTyp
         serverArena.status = 4
     end
 
+    print('new arena: gameID: '..serverArena.gameData.gameID.." / startTimer: "..serverArena.startTimer.." / everyoneReady: "..tostring(serverArena.gameData.isEveryoneReady) )
     TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
 end
 
@@ -154,13 +166,13 @@ AddEventHandler('BloodBowl.SetReady', function(_bool, _isBot)
             serverArena.lobbyPlayers[myPlace].ready = 1
             if serverArena.status == 1 then
                 serverArena.status = 0
-                serverArena.startTimer = 30
+                serverArena.startTimer = originalGameData.startTimer
             end
         elseif serverArena.lobbyPlayers[myPlace].ready == 1 then
             serverArena.lobbyPlayers[myPlace].ready = 0
             if serverArena.status == 1 then
                 serverArena.status = 0
-                serverArena.startTimer = 30
+                serverArena.startTimer = originalGameData.startTimer
             end
         end
         TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
@@ -187,6 +199,7 @@ AddEventHandler('BloodBowl.StartGameCountdown', function()
         --start countdown.
         serverArena.status = 1
         while serverArena.status == 1 do
+            print(serverArena.startTimer)
             if serverArena.startTimer > 0 then
                 serverArena.startTimer = serverArena.startTimer - 1
             else
@@ -216,7 +229,7 @@ AddEventHandler('BloodBowl.PlayerOpenedMainMenu', function(_isBot)
             table.insert(serverArena.lobbyPlayers, _data)
             if serverArena.status == 1 then
                 serverArena.status = 0
-                serverArena.startTimer = 30
+                serverArena.startTimer = originalGameData.startTimer
             end
             Citizen.Wait(200)
             TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
@@ -253,7 +266,7 @@ AddEventHandler('BloodBowl.PlayerClosedMainMenu', function(_isBot)
             end
             if serverArena.status == 1 then
                 serverArena.status = 0
-                serverArena.startTimer = 30
+                serverArena.startTimer = originalGameData.startTimer
             end
             --serverArena.lobbyPlayers[myPlace] = nil
             table.remove(serverArena.lobbyPlayers, myPlace)
@@ -332,6 +345,7 @@ AddEventHandler('BloodBowl.FinishedIntro', function()
             for i,k in pairs(serverArena.activePlayers) do
                 if tonumber(k.id) == src then
                     serverArena.activePlayers[i].finishedIntro = true
+                    print('updated intro')
                     TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
                 end
             end
@@ -379,6 +393,15 @@ RegisterCommand('joinbot', function(source, args)
     else
         print('invalid bot id')
     end
+end)
+
+RegisterCommand('observeOriginal', function()
+    Citizen.CreateThread(function()
+        while true do
+            print("original template: gameID: "..originalGameData.gameData.gameID.." / startTime: "..originalGameData.startTimer.." / lobby players: "..#originalGameData.lobbyPlayers)
+            Citizen.Wait(200)
+        end
+    end)
 end)
 
 RegisterCommand('players', function()
