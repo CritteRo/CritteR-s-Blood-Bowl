@@ -24,7 +24,7 @@ originalGameData = {
     lobbyPlayers = {}, --all players, in the lobby.
     maxPlayers = 16,
     startTimer = 10, --timer, in seconds, from when HOST player presses on Start.
-    gameData = {timeLeft = GetGameTimer() + 900000 --[[15 minutes]], gameID = math.random(1,999999999), isEveryoneReady = false, maxPoints = 100},
+    gameData = {timeLeft = GetGameTimer() + 900000 --[[15 minutes]], gameID = math.random(1,999999999), isEveryoneReady = false, maxPoints = 100, repairSpot = 1, cpSpot = 1},
 }
 originalPlayerData = {id = 0, name = "PlayerName", score = 30, checkpointsUsed = 0, repairsUsed = 0, finishedIntro = false} --player data used by players in the original blood bowl.
 
@@ -122,7 +122,7 @@ function forceRestartArena(isSilent, isExpected, closeArenaAfterRestart, gameTyp
             lobbyPlayers = {}, --all players, in the lobby.
             maxPlayers = originalGameData.maxPlayers,
             startTimer = originalGameData.startTimer, --timer, in seconds, from when HOST player presses on Start.
-            gameData = {timeLeft = GetGameTimer() + 900000 --[[15 minutes]], gameID = math.random(1,999999999), isEveryoneReady = false, maxPoints = originalGameData.gameData.maxPoints},
+            gameData = {timeLeft = GetGameTimer() + 900000 --[[15 minutes]], gameID = math.random(1,999999999), isEveryoneReady = false, maxPoints = originalGameData.gameData.maxPoints, repairSpot = 1, cpSpot = 1},
         }
     else
         print('WARNING: USED WRONG GAMETYPE IN forceRestartArena. :: sv_arena_handler.lua')
@@ -286,6 +286,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             FreezeEntityPosition(gameCars[rows], true)
             rows = rows + 1
             TriggerClientEvent('BloodBowl.StartIntro', k.id, serverArena.type)
+            TriggerClientEvent('BloodBowl.StartClientGameLoop', k.id)
         end
         local gameID = serverArena.gameData.gameID
         while serverArena.status == 2 and gameID == serverArena.gameData.gameID do --wait for everyone to watch the intro..
@@ -338,6 +339,37 @@ AddEventHandler('BloodBowl.FinishedIntro', function()
                     serverArena.activePlayers[i].finishedIntro = true
                     print('updated intro')
                     TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
+                end
+            end
+        end
+    end
+end)
+
+RegisterNetEvent('BloodBowl.CheckpointReached')
+AddEventHandler('BloodBowl.CheckpointReached', function(_type)
+    local src = source
+    if serverArena.status == 2 then
+        if GetPlayerInArenaValue(src) == serverArena.gameData.gameID then
+            for i,k in pairs(serverArena.activePlayers) do
+                if k.id == src then
+                    local pedCoords = GetEntityCoords(GetPlayerPed(src))
+                    if _type == "points" then
+                        local dist = #(vector3(originalPointsCoords[serverArena.gameData.cpSpot].x, originalPointsCoords[serverArena.gameData.cpSpot].y, originalPointsCoords[serverArena.gameData.cpSpot].z) - pedCoords)
+                        if dist <= 7.0 then
+                            serverArena.activePlayers[i].score = serverArena.activePlayers[i].score + 10
+                            serverArena.gameData.cpSpot = math.random(1, #originalPointsCoords)
+                            TriggerEvent('cS.MidsizeBanner', src, '~r~+10 POINTS~s~', "", 5, true)
+                            TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
+                        end
+                    elseif _type == "repair" then
+                        local dist = #(vector3(originalRepairCoords[serverArena.gameData.repairSpot].x, originalRepairCoords[serverArena.gameData.repairSpot].y, originalRepairCoords[serverArena.gameData.repairSpot].z) - pedCoords)
+                        if dist <= 7.0 then
+                            serverArena.gameData.repairSpot = math.random(1, #originalRepairCoords)
+                            TriggerEvent('cS.MidsizeBanner', src, '~b~VEHICLE REPAIRED~s~', "...not really...", 5, true)
+                            TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
+                        end
+                    end
+                    break
                 end
             end
         end

@@ -9,10 +9,18 @@ arenaData = { --this should be used only when
     gameData = {}, --depending on the type of gamemode, this should have some values here.
 }
 
+local updateCheckpointsThisFrame = false
+
 TriggerServerEvent('BloodBowl.RequestInitialArenaData')
 
 RegisterNetEvent('BloodBowl.UpdateArenaData')
 AddEventHandler('BloodBowl.UpdateArenaData', function(_data)
+    if _data.gameData.cpSpot ~= nil and _data.gameData.repairSpot ~= nil then
+        if _data.gameData.cpSpot ~= arenaData.gameData.cpSpot or _data.gameData.repairSpot ~= arenaData.gameData.repairSpot then
+            updateCheckpointsThisFrame = true
+        end
+    end
+
     arenaData = _data
     local _panel = {
         name = "Blood Bowl: "..GameTypeToName[arenaData.type],
@@ -36,4 +44,38 @@ AddEventHandler('BloodBowl.UpdateArenaData', function(_data)
         TriggerEvent('lobbymenu:ReloadMenu')
     end
     TriggerEvent('bloodBowl.UpdateOutsidePanel', {name = _panel.name, rp = 1, cash = 1, belowMessage = _panel.belowMessage, playersReady = _panel.playersReady, description = _panel.description})
+end)
+
+RegisterNetEvent('BloodBowl.StartClientGameLoop')
+AddEventHandler('BloodBowl.StartClientGameLoop', function()
+    local gameID = arenaData.gameData.gameID
+    local pointSpot = arenaData.gameData.cpSpot
+    local repairSpot = arenaData.gameData.repairSpot
+    local rprCoords = originalRepairCoords
+    local pointCoords = originalPointsCoords
+    local ped = PlayerPedId()
+
+    setCheckpoint("repair", 11, rprCoords[repairSpot].x, rprCoords[repairSpot].y, rprCoords[repairSpot].z, 0.0, 0.0, 0.0, 6.0, 60, 60, 255, 240)
+    setCheckpoint("points", 47, pointCoords[pointSpot].x, pointCoords[pointSpot].y, pointCoords[pointSpot].z, 0.0, 0.0, 0.0, 6.0, 255, 60, 60, 240)
+
+    while arenaData.gameData.gameID == gameID and arenaData.status == 2 do
+        pointSpot = arenaData.gameData.cpSpot
+        repairSpot = arenaData.gameData.repairSpot
+        local pointDist = #(vector3(pointCoords[pointSpot].x, pointCoords[pointSpot].y, pointCoords[pointSpot].z) - GetEntityCoords(ped))
+        local rprDist = #(vector3(rprCoords[repairSpot].x, rprCoords[repairSpot].y, rprCoords[repairSpot].z) - GetEntityCoords(ped))
+
+        if updateCheckpointsThisFrame == true then
+            setCheckpoint("repair", 11, rprCoords[repairSpot].x, rprCoords[repairSpot].y, rprCoords[repairSpot].z, 0.0, 0.0, 0.0, 6.0, 60, 60, 255, 240)
+            setCheckpoint("points", 47, pointCoords[pointSpot].x, pointCoords[pointSpot].y, pointCoords[pointSpot].z, 0.0, 0.0, 0.0, 6.0, 255, 60, 60, 240)
+            updateCheckpointsThisFrame = false
+        end
+        if pointDist <= 6.0 then
+            TriggerServerEvent('BloodBowl.CheckpointReached', 'points')
+        end
+
+        if rprDist <= 6.0 then
+            TriggerServerEvent('BloodBowl.CheckpointReached', 'repair')
+        end
+        Citizen.Wait(0)
+    end
 end)
