@@ -33,7 +33,7 @@ end
 
 function spawnPed(coords)
     local ped = 0
-    ped = CreatePed(1, 'g_m_importexport_01', coords.x, coords.y, coords.z, math.random(0,200)+0.0, true, false)
+    ped = CreatePed(1, 'u_m_m_streetart_01', coords.x, coords.y, coords.z, math.random(0,200)+0.0, true, false)
     SetPedRandomComponentVariation(ped, 1)
     GiveWeaponToPed(ped, "weapon_microsmg", 9999, false, true)
     SetPedArmour(ped, 100)

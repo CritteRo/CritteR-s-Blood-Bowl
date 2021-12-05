@@ -20,6 +20,8 @@ AddEventHandler('test.CreateGroups', function()
     AddRelationshipGroup('GROUP_BLOODBOWL_TEST_16')
 
     for i=1,16 do
+        SetRelationshipBetweenGroups(1--[[respect]], GetHashKey("GROUP_BLOODBOWL_TEST_"..i), GetHashKey("PLAYER"))
+        SetRelationshipBetweenGroups(1--[[respect]], GetHashKey("PLAYER"), GetHashKey("GROUP_BLOODBOWL_TEST_"..i))
         for k=1,16 do
             if i ~= k then
                 SetRelationshipBetweenGroups(5--[[hate]], GetHashKey("GROUP_BLOODBOWL_TEST_"..i), GetHashKey("GROUP_BLOODBOWL_TEST_"..k))
