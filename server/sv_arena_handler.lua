@@ -59,7 +59,6 @@ AddEventHandler('onResourceStart', function(_name) --make sure we register ALL O
     if _name == GetCurrentResourceName() then
         for _,src in ipairs(GetPlayers()) do
             CreateNewPlayerData(src)
-            print(serverPlayers[src].inArena)
         end
     end
 end)
@@ -94,7 +93,6 @@ function forceRestartArena(isSilent, isExpected, closeArenaAfterRestart, gameTyp
     --gameType is the gamemode type that will use when the arena restarts.
     RunEntityCleanup(true)
     for i,k in pairs(serverPlayers) do
-        print(i)
         if tonumber(i) > 0 then
             if k.inArena ~= -1 and k.inArena == serverArena.gameData.gameID then
                 serverPlayers[i].inArena = -1
@@ -122,23 +120,16 @@ function forceRestartArena(isSilent, isExpected, closeArenaAfterRestart, gameTyp
             activePlayers = {}, --players alive during the round.
             spectatingPlayers = {}, --players "dead" during the round, 
             lobbyPlayers = {}, --all players, in the lobby.
-            maxPlayers = 16,
-            startTimer = 10, --timer, in seconds, from when HOST player presses on Start.
-            gameData = {timeLeft = GetGameTimer() + 900000 --[[15 minutes]], gameID = math.random(1,999999999), isEveryoneReady = false, maxPoints = 100},
+            maxPlayers = originalGameData.maxPlayers,
+            startTimer = originalGameData.startTimer, --timer, in seconds, from when HOST player presses on Start.
+            gameData = {timeLeft = GetGameTimer() + 900000 --[[15 minutes]], gameID = math.random(1,999999999), isEveryoneReady = false, maxPoints = originalGameData.gameData.maxPoints},
         }
-        serverArena.gameData.gameID = math.random(1,999999999)
-        print(serverArena.startTimer.. " against "..originalGameData.startTimer)
     else
         print('WARNING: USED WRONG GAMETYPE IN forceRestartArena. :: sv_arena_handler.lua')
     end
-    serverArena.status = 0
-    serverArena.lobbyPlayers = {}
-    serverArena.activePlayers = {}
     if closeArenaAfterRestart == true then
         serverArena.status = 4
     end
-
-    print('new arena: gameID: '..serverArena.gameData.gameID.." / startTimer: "..serverArena.startTimer.." / everyoneReady: "..tostring(serverArena.gameData.isEveryoneReady) )
     TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
 end
 
@@ -278,7 +269,7 @@ end)
 AddEventHandler('BloodBowl.StartGame', function()
     if serverArena.status == 1 and serverArena.startTimer <= 0 then
         serverArena.status = 2
-        local _pData = originalPlayerData
+        local _pData = {id = 0, name = "PlayerName", score = 30, checkpointsUsed = 0, repairsUsed = 0, finishedIntro = false}
         for i,k in pairs(serverArena.lobbyPlayers) do
             serverArena.activePlayers[i] = _pData
             serverArena.activePlayers[i].name = k.name
