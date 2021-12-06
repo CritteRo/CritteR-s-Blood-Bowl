@@ -271,9 +271,9 @@ AddEventHandler('BloodBowl.StartGame', function()
         serverArena.status = 2
         local _pData = {id = 0, name = "PlayerName", score = 30, checkpointsUsed = 0, repairsUsed = 0, finishedIntro = false}
         for i,k in pairs(serverArena.lobbyPlayers) do
-            serverArena.activePlayers[i] = _pData
+            serverArena.activePlayers[i] = {id = 0, name = "PlayerName", score = 30, checkpointsUsed = 0, repairsUsed = 0, finishedIntro = false}
             serverArena.activePlayers[i].name = k.name
-            serverArena.activePlayers[i].id = k.id
+            serverArena.activePlayers[i].id = tonumber(k.id)
         end
         serverArena.lobbyPlayers = {}
         local rows = 1
@@ -281,6 +281,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             setPlayerInArena(k.id)
             gameCars[rows] = CreateArenaVehicle("deviant", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
             gameCopilots[rows] = CreateCopilot(spawnCoords[rows])
+            while 
             SetPedIntoVehicle(GetPlayerPed(tonumber(k.id)), gameCars[rows], -1)
             SetPedIntoVehicle(gameCopilots[rows], gameCars[rows], 0)
             FreezeEntityPosition(gameCars[rows], true)
@@ -288,7 +289,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             TriggerClientEvent('BloodBowl.StartIntro', k.id, serverArena.type)
             TriggerClientEvent('BloodBowl.StartClientGameLoop', k.id)
         end
-        if rows < 9 then --bots
+        --[[if rows < 9 then --bots
             for i=0, 9-rows do
                 gameCars[rows] = CreateArenaVehicle("deviant", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
                 gameCopilots[rows] = CreateCopilot(spawnCoords[rows])
@@ -296,7 +297,7 @@ AddEventHandler('BloodBowl.StartGame', function()
                 FreezeEntityPosition(gameCars[rows], true)
                 rows = rows + 1
             end
-        end
+        end]]
         local gameID = serverArena.gameData.gameID
         while serverArena.status == 2 and gameID == serverArena.gameData.gameID do --wait for everyone to watch the intro..
             local allReady = true
