@@ -122,6 +122,40 @@ function BuildAndShowEndScreen(ZinitialText, Ztable, Zmoney, Zxp)
     end)
 end
 
+RegisterCommand('ends', function()
+    local _initialText = { --first slide. Consists of 3 text lines.
+    missionTextLabel = "BLOOD BOWL: ORIGINAL", 
+    passFailTextLabel = "WINNER!",
+    messageLabel = "",
+    }
+    local _table = { --second slide. You can add as many "stats" as you want. They will appear from botton to top, so keep that in mind.
+        {stat = "CritteR", value = "~y~1st Place~s~"},
+        {stat = "NTT", value = "~w~2nd Place~s~"},
+        --{stat = "sgnf", value = "~r~3rd Place~s~"},
+        --{stat = "ndfg", value = "~r~3rd Place~s~"},
+        --{stat = "NadgfsvdgvasdTT", value = "~r~3rd Place~s~"},
+        --{stat = "NfgdbsfbfdsTT", value = "~r~3rd Place~s~"},
+        --{stat = "NnsgfnghdnfghmjhTT", value = "~r~3rd Place~s~"},
+
+        --{stat = "value2", value = "~b~1999~s~"},
+        --{stat = "value1", value = "TEST"},
+    }
+    --BuildAndShowEndScreen(_initialText, _table, {startMoney = 0, finishMoney = 0}, {xpGained = 0})
+    TriggerEvent("BloodBowl.FinaleUI", _initialText, _table, {startMoney = 0, finishMoney = 0}, {xpGained = 0}, (1 + #_table * 1.5 + 1), true)
+end)
+
+AddEventHandler("BloodBowl.FinaleUI", function(_initialText, _table, _money, _xp, _waitTime, _playSound)
+    showHeistBanner = true
+    if _playSound ~= nil and _playSound == true then
+        PlaySoundFrontend(-1, "CHECKPOINT_PERFECT", "HUD_MINI_GAME_SOUNDSET", 1)
+    end
+    BuildAndShowEndScreen(_initialText, _table, _money, _xp)
+    Citizen.CreateThread(function()
+        Citizen.Wait(tonumber(_waitTime) * 1000)
+        showHeistBanner = false
+    end)
+end)
+
 RegisterNetEvent('BloodBowl.Show_UI_Element')
 AddEventHandler('BloodBowl.Show_UI_Element', function(type, ...)
     local args = {...}

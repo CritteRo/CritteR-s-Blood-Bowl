@@ -288,6 +288,15 @@ AddEventHandler('BloodBowl.StartGame', function()
             TriggerClientEvent('BloodBowl.StartIntro', k.id, serverArena.type)
             TriggerClientEvent('BloodBowl.StartClientGameLoop', k.id)
         end
+        if rows < 9 then --bots
+            for i=0, 9-rows do
+                gameCars[rows] = CreateArenaVehicle("deviant", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
+                gameCopilots[rows] = CreateCopilot(spawnCoords[rows])
+                SetPedIntoVehicle(gameCopilots[rows], gameCars[rows], 0)
+                FreezeEntityPosition(gameCars[rows], true)
+                rows = rows + 1
+            end
+        end
         local gameID = serverArena.gameData.gameID
         while serverArena.status == 2 and gameID == serverArena.gameData.gameID do --wait for everyone to watch the intro..
             local allReady = true
@@ -304,8 +313,18 @@ AddEventHandler('BloodBowl.StartGame', function()
             Citizen.Wait(200) --we are running a loop here, so checking it every frame might not be that good of an ideea.
         end
 
+        local carsForClient = {}
+        local copilotsForClient = {}
+        for i,k in pairs(gameCars) do
+            carsForClient[i] = NetworkGetNetworkIdFromEntity(k)
+        end
+        for i,k in pairs(gameCopilots) do
+            copilotsForClient[i] = NetworkGetNetworkIdFromEntity(k)
+        end
+
         for i,k in pairs(serverArena.activePlayers) do
             TriggerClientEvent("cS.Countdown", tonumber(k.id), 0, 150, 200, 5, true)
+            TriggerClientEvent('BloodBowl.GiveEntitiesToPlayers',tonumber(k.id), carsForClient, copilotsForClient)
         end
 
         Citizen.Wait(5000)

@@ -46,6 +46,57 @@ AddEventHandler('BloodBowl.UpdateArenaData', function(_data)
     TriggerEvent('bloodBowl.UpdateOutsidePanel', {name = _panel.name, rp = 1, cash = 1, belowMessage = _panel.belowMessage, playersReady = _panel.playersReady, description = _panel.description})
 end)
 
+RegisterNetEvent('BloodBowl.GiveEntitiesToPlayers')
+RegisterNetEvent('BloodBowl.GiveEntitiesToPlayers', function(gameCars, gamePeds)
+    for i,k in pairs(gamePeds) do
+        while IsEntityAPed(NetToPed(k)) == false do
+            Citizen.Wait(10)
+        end
+    end
+
+    for i,k in pairs(gameCars) do
+        while IsEntityAVehicle(NetToVeh(k)) == false do
+            Citizen.Wait(10)
+        end
+    end
+    print('Entities loaded for blood bowl')
+
+    local groups = {
+        [1] = GetHashKey('GROUP_BLOODBOWL_TEST_1'),
+        [2] = GetHashKey('GROUP_BLOODBOWL_TEST_2'),
+        [3] = GetHashKey('GROUP_BLOODBOWL_TEST_3'),
+        [4] = GetHashKey('GROUP_BLOODBOWL_TEST_4'),
+        [5] = GetHashKey('GROUP_BLOODBOWL_TEST_5'),
+        [6] = GetHashKey('GROUP_BLOODBOWL_TEST_6'),
+        [7] = GetHashKey('GROUP_BLOODBOWL_TEST_7'),
+        [8] = GetHashKey('GROUP_BLOODBOWL_TEST_8'),
+        [9] = GetHashKey('GROUP_BLOODBOWL_TEST_9'),
+        [10] = GetHashKey('GROUP_BLOODBOWL_TEST_10'),
+        [11] = GetHashKey('GROUP_BLOODBOWL_TEST_11'),
+        [12] = GetHashKey('GROUP_BLOODBOWL_TEST_12'),
+        [13] = GetHashKey('GROUP_BLOODBOWL_TEST_13'),
+        [14] = GetHashKey('GROUP_BLOODBOWL_TEST_14'),
+        [15] = GetHashKey('GROUP_BLOODBOWL_TEST_15'),
+        [16] = GetHashKey('GROUP_BLOODBOWL_TEST_16'),
+    }
+
+    local carIDS = {}
+    local pedIDS = {}
+    for i,k in pairs(gameCars) do
+        carIDS[i] = NetToVeh(k)
+    end
+    local myPlace = math.random(1,16)
+    for i,k in pairs(gamePeds) do
+        pedIDS[i] = NetToPed(k)
+        SetPedInfiniteAmmo(pedIDS[i], true, "weapon_microsmg")
+        SetPedCombatAttributes(pedIDS[i], 2, true)
+        SetPedCombatAttributes(pedIDS[i], 46, true)
+        SetPedCombatAttributes(pedIDS[i], 3, false)
+        SetPedCombatRange(pedIDS[i], 2)
+        SetPedRelationshipGroupHash(pedIDS[i], groups[i])
+    end
+end)
+
 RegisterNetEvent('BloodBowl.StartClientGameLoop')
 AddEventHandler('BloodBowl.StartClientGameLoop', function()
     local gameID = arenaData.gameData.gameID
