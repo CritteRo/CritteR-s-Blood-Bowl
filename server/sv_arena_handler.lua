@@ -365,7 +365,7 @@ AddEventHandler('BloodBowl.CheckpointReached', function(_type)
                         local dist = #(vector3(originalRepairCoords[serverArena.gameData.repairSpot].x, originalRepairCoords[serverArena.gameData.repairSpot].y, originalRepairCoords[serverArena.gameData.repairSpot].z) - pedCoords)
                         if dist <= 7.0 then
                             serverArena.gameData.repairSpot = math.random(1, #originalRepairCoords)
-                            TriggerClientEvent('BloodBowl.Show_UI_Element', src, "banner", "small", "VEHICLE REPAIRED", "..not really", 9, 5, true)
+                            TriggerClientEvent('BloodBowl.Show_UI_Element', src, "banner", "small", "VEHICLE REPAIRED", "..not really", 11, 5, true)
                             TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
                         end
                     end
