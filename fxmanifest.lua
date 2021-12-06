@@ -17,6 +17,7 @@ client_scripts {
 }
 
 server_scripts {
+    'server/sv_arena_utils.lua',
     'server/sv_arena_handler.lua',
     'server/sv_arena_vehicles.lua',
     'server/sv_ai_test.lua',

@@ -338,13 +338,63 @@ AddEventHandler('BloodBowl.StartGame', function()
                 --todo
                 for i,k in pairs(serverArena.activePlayers) do
                     if k.score > 0 then
-                        TriggerClientEvent('BloodBowl.Show_UI_Element',tonumber(k.id), "caption", "Your score: ~r~"..(k.score - 1).."~s~ / "..serverArena.gameData.maxPoints..".", 1005)
-                        serverArena.activePlayers[i].score = serverArena.activePlayers[i].score - 1
+                        if k.score >= 100 then
+                            serverArena.status = 3 --finish the game
+                            break
+                        else
+                            TriggerClientEvent('BloodBowl.Show_UI_Element',tonumber(k.id), "caption", "Your score: ~r~"..(k.score - 1).."~s~ / "..serverArena.gameData.maxPoints..".", 1005)
+                            serverArena.activePlayers[i].score = serverArena.activePlayers[i].score - 1
+                        end
+                    else
+                        --fail state here. Remove player from active group to spectating
                     end
                 end
             end
             Citizen.Wait(1000)
         end
+
+        local _activeTable = { --second slide. You can add as many "stats" as you want. They will appear from botton to top, so keep that in mind.
+            --{stat = "CritteR", value = "~y~1st Place~s~"},
+            --{stat = "NTT", value = "~w~2nd Place~s~"},
+        }
+        local row_ = 1
+        for k,v in spairs(serverArena.activePlayers, function(t,a,b) return t[b].checkpointsUsed < t[a].checkpointsUsed end) do
+            --print(k,v.checkpointsUsed)
+            if row_ == 1 then
+                _activeTable[row_] = {stat = v.name, value = "~y~"..row_..". "..v.score.." Remaining score~s~"}
+            elseif row_ == 2 then
+                _activeTable[row_] = {stat = v.name, value = "~w~"..row_..". "..v.score.." Remaining score~s~"}
+            elseif row_ == 3 then
+                _activeTable[row_] = {stat = v.name, value = "~r~"..row_..". "..v.score.." Remaining score~s~"}
+            else
+                _activeTable[row_] = {stat = v.name, value = row_..". "..v.score.." Remaining score~s~"}
+            end
+            row_ = row_ + 1
+        end
+
+        for i,k in pairs(serverArena.activePlayers) do
+            local _initialText = { --first slide. Consists of 3 text lines.
+                missionTextLabel = "BLOOD BOWL: ORIGINAL", 
+                passFailTextLabel = "WINNER!",
+                messageLabel = "",
+            }
+
+            if k.score < 100 then
+                _initialText.passFailTextLabel = "LOSER!"
+            end
+            TriggerClientEvent("BloodBowl.FinaleUI", tonumber(k.id), _initialText, _activeTable, {startMoney = 0, finishMoney = 0}, {xpGained = 0}, (1 + #_activeTable * 1.5 + 2), true)
+        end
+        for i,k in pairs(serverArena.spectatingPlayers) do
+            local _initialText = { --first slide. Consists of 3 text lines.
+                missionTextLabel = "BLOOD BOWL: ORIGINAL", 
+                passFailTextLabel = "GAME OVER!",
+                messageLabel = "",
+            }
+            TriggerClientEvent("BloodBowl.FinaleUI", tonumber(k.id), _initialText, _activeTable, {startMoney = 0, finishMoney = 0}, {xpGained = 0}, (1 + #_activeTable * 1.5 + 2), true)
+        end
+
+        Citizen.Wait(10000) --wait 10 seconds, then restart arena.
+        forceRestartArena(false, true, false, 0, 0)
     end
 end)
 

@@ -144,6 +144,7 @@ RegisterCommand('ends', function()
     TriggerEvent("BloodBowl.FinaleUI", _initialText, _table, {startMoney = 0, finishMoney = 0}, {xpGained = 0}, (1 + #_table * 1.5 + 1), true)
 end)
 
+RegisterNetEvent('BloodBowl.FinaleUI')
 AddEventHandler("BloodBowl.FinaleUI", function(_initialText, _table, _money, _xp, _waitTime, _playSound)
     showHeistBanner = true
     if _playSound ~= nil and _playSound == true then
