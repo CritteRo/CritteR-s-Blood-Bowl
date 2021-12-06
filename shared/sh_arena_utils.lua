@@ -30,7 +30,9 @@ GameTypeToName = {
 
 statusIdToUI = {
     [0] = {"NOT READY", 6},
-    [1] = {"READY", 18}
+    [1] = {"READY", 18},
+    [2] = {"IN ARENA", 10},
+    [3] = {"SPECTATING", 11},
 }
 
 originalRepairCoords = {
