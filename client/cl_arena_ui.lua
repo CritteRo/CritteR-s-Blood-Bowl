@@ -22,11 +22,14 @@ end
 ScaleformVarious = 0
 ScaleformEndScreen = 0
 
-function BuildBigBanner(_title, _subtitle)
+isBannerShowing = false
+bannerTimeLeft = 0
+
+function BuildBigBanner(_title, _subtitle, _color)
     local scaleform = Scaleform.Request('MP_BIG_MESSAGE_FREEMODE')
 
     Scaleform.CallFunction(scaleform, false, "SHOW_SHARD_CENTERED_MP_MESSAGE")
-    Scaleform.CallFunction(scaleform, false, "SHARD_SET_TEXT", _title, _subtitle, 0)
+    Scaleform.CallFunction(scaleform, false, "SHARD_SET_TEXT", _title, _subtitle, _color)
 
     return scaleform
 end
@@ -35,6 +38,12 @@ function BuildSmallBanner(_title, _subtitle, _bannerColor)
     local scaleform = Scaleform.Request('MIDSIZED_MESSAGE')
     Scaleform.CallFunction(scaleform, false, "SHOW_COND_SHARD_MESSAGE", _title, _subtitle, _bannerColor, true)
     return scaleform
+end
+
+function ShowBusySpinner(_text)
+    BeginTextCommandBusyspinnerOn("STRING")
+    AddTextComponentSubstringPlayerName(_text)
+    EndTextCommandBusyspinnerOn(1)
 end
 
 function BuildAndShowCreditsBlock(_role, _name, _x, _y)
@@ -122,11 +131,59 @@ AddEventHandler('BloodBowl.Show_UI_Element', function(type, ...)
         alert(args[1])
     elseif type == 'caption' then
         caption(args[1], args[2])
-    elseif type == "banner" then
+    elseif type == "banner" then --6,9
         if args[1] == 'small' then
-            
+            TriggerEvent('BloodBowl.SmallBanner', args[2], args[3], args[4], args[5], args[6])
         elseif args[1] == 'big' then
-
+            TriggerEvent('BloodBowl.BigBanner', args[2], args[3], args[4], args[5], args[6])
         end
+    end
+end)
+
+AddEventHandler("BloodBowl.BigBanner", function(_title, _subtitle, _color, _waitTime, _playSound)
+    if _playSound ~= nil and _playSound == true then
+        PlaySoundFrontend(-1, "CHECKPOINT_PERFECT", "HUD_MINI_GAME_SOUNDSET", 1)
+    end
+    ScaleformVarious = BuildBigBanner(_title, _subtitle, _color)
+    bannerTimeLeft = _waitTime * 100
+    if isBannerShowing == false then
+        isBannerShowing = true
+        Citizen.CreateThread(function()
+            while isBannerShowing == true do
+                if bannerTimeLeft == 20 then
+                    Scaleform.CallFunction(ScaleformVarious, false, "SHARD_ANIM_OUT", 2, 0.4, 0)
+                end
+                Citizen.Wait(1)
+                bannerTimeLeft = bannerTimeLeft - 1
+                if bannerTimeLeft <= 0 then
+                    isBannerShowing = false
+                end
+                DrawScaleformMovieFullscreen(ScaleformVarious, 255, 255, 255, 255)
+            end
+        end)
+    end
+end)
+
+AddEventHandler("BloodBowl.SmallBanner", function(_title, _subtitle, _color, _waitTime, _playSound)
+    if _playSound ~= nil and _playSound == true then
+        PlaySoundFrontend(-1, "CHECKPOINT_PERFECT", "HUD_MINI_GAME_SOUNDSET", 1)
+    end
+    ScaleformVarious = BuildSmallBanner(_title, _subtitle, _color)
+    bannerTimeLeft = _waitTime * 100
+    if isBannerShowing == false then
+        isBannerShowing = true
+        Citizen.CreateThread(function()
+            while isBannerShowing == true do
+                if bannerTimeLeft == 20 then
+                    Scaleform.CallFunction(ScaleformVarious, false, "SHARD_ANIM_OUT", 2, 0.4, 0)
+                end
+                Citizen.Wait(1)
+                bannerTimeLeft = bannerTimeLeft - 1
+                if bannerTimeLeft <= 0 then
+                    isBannerShowing = false
+                end
+                DrawScaleformMovieFullscreen(ScaleformVarious, 255, 255, 255, 255)
+            end
+        end)
     end
 end)

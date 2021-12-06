@@ -1,11 +1,11 @@
 camCoords = {
     [0] = {
         [1] = {x1 = 2965.11, y1 = -3713.66, z1 = 208.82, rx1 = 0.0, ry1 = 0.0, h1 = 129.203, x2 = 2965.11, y2 = -3713.66, z2 = 193.45, rx2 = 0.0, ry2 = 0.0, h2 = 129.203, time = 8000},
-        [2] = {x1 = 2839.936, y1 = -3892.106, z1 = 139.95,rx1 = 0.0, ry1 = 0.0, h1 = 179.62, x2 = 2760.803, y2 = -3892.106, z2 = 139.95, rx2 = 0.0, ry2 = 0.0, h2 = 179.62, time = 16000},
+        [2] = {x1 = 2839.936, y1 = -3892.106, z1 = 139.95,rx1 = 0.0, ry1 = 0.0, h1 = 179.62, x2 = 2760.803, y2 = -3892.106, z2 = 139.95, rx2 = 0.0, ry2 = 0.0, h2 = 179.62, time = 6000},
         [3] = {x1 = 2837.79, y1 = -3818.19, z1 = 114.71,rx1 = 0.0, ry1 = 0.0, h1 = 54.63, x2 = 2812.47, y2 = -3800.22, z2 = 114.71, rx2 = 0.0, ry2 = 0.0, h2 = 54.63, time = 10000},
         [4] = {x1 = 2698.91, y1 = -3870.83, z1 = 177.7009,rx1 = -90.0, ry1 = 0.0, h1 = 306.76, x2 = 2840.48, y2 = -3755.11, z2 = 177.7009, rx2 = -90.0, ry2 = 0.0, h2 = 309.25, time = 10000},
-        [5] = {x1 = 2759.959, y1 = -3709.447, z1 = 140.478,rx1 = 0.0, ry1 = 0.0, h1 = 359.33, x2 = 2839.932, y2 = -3709.447, z2 = 140.478, rx2 = 0.0, ry2 = 0.0, h2 = 359.33, time = 16000},
-        [6] = {x1 = 2895.34, y1 = -3892.233, z1 = 187.37,rx1 = -30.0, ry1 = 0.0, h1 = 354.62, x2 = 2720.253, y2 = -3892.233, z2 = 187.37, rx2 = -30.0, ry2 = 0.0, h2 = 354.62, time = 14000},
+        [5] = {x1 = 2759.959, y1 = -3709.447, z1 = 140.478,rx1 = 0.0, ry1 = 0.0, h1 = 359.33, x2 = 2839.932, y2 = -3709.447, z2 = 140.478, rx2 = 0.0, ry2 = 0.0, h2 = 359.33, time = 6000},
+        [6] = {x1 = 2895.34, y1 = -3892.233, z1 = 187.37,rx1 = -30.0, ry1 = 0.0, h1 = 354.62, x2 = 2720.253, y2 = -3892.233, z2 = 187.37, rx2 = -30.0, ry2 = 0.0, h2 = 354.62, time = 4000},
         [7] = {x1 = 2965.11, y1 = -3713.66, z1 = 208.82, rx1 = 0.0, ry1 = 0.0, h1 = 129.203, x2 = 2965.11, y2 = -3713.66, z2 = 193.45, rx2 = 0.0, ry2 = 0.0, h2 = 129.203, time = 8000},
     }
 }
@@ -20,6 +20,7 @@ local testMessages = {
 }
 
 local showingIntro = false
+local skipNextFrame = false
 
 Citizen.CreateThread(function()
     while true do
@@ -29,6 +30,13 @@ Citizen.CreateThread(function()
         else
             Citizen.Wait(200)
         end
+    end
+end)
+
+RegisterCommand('skipintro', function()
+    if skipNextFrame == false and showingIntro == true then
+        skipNextFrame = true
+        ShowBusySpinner(GetLabelText('CBB_INTRO_SKIPPING'))
     end
 end)
 
@@ -42,6 +50,7 @@ function showArenaIntro(_aID, _messages)
     local cams = {}
     local row = 1
     messageRow = 1
+    skipNextFrame = false
     for i,k in pairs(camCoords[_aID]) do
         if true then
             cams[row] = {
@@ -69,19 +78,24 @@ function showArenaIntro(_aID, _messages)
     showingIntro = true
 
     for i,k in pairs(cams) do
-        local _,int = math.modf(i/2)
-        if int > 0 then
-            SetFocusPosAndVel(cams[i].pos[1], cams[i].pos[2], cams[i].pos[3], 0.0, 0.0, 0.0)
-            SetCamActiveWithInterp(cams[i+1].handle, cams[i].handle, cams[i].time, 1, 1)
-            if i == 1 then
-                TriggerEvent('cS.banner', '~y~Welcome to Blood Bowl!~s~', "Original gamemode.", cams[i].time/1000, true)
-            else
-                caption(tostring(_messages[messageRow]), cams[i].time)
-                messageRow = messageRow + 1
+        if skipNextFrame == false or i <= 2 then
+            local _,int = math.modf(i/2)
+            if int > 0 then
+                SetFocusPosAndVel(cams[i].pos[1], cams[i].pos[2], cams[i].pos[3], 0.0, 0.0, 0.0)
+                SetCamActiveWithInterp(cams[i+1].handle, cams[i].handle, cams[i].time, 1, 1)
+                if i == 1 then
+                    TriggerEvent('BloodBowl.BigBanner', "~r~WELCOME TO BLOOD BOWL!~s~", "", 0, cams[i].time/1000, true)
+                else
+                    caption(tostring(_messages[messageRow]), cams[i].time)
+                    messageRow = messageRow + 1
+                end
+                Citizen.Wait(cams[i].time)
             end
-            Citizen.Wait(cams[i].time)
+        else
+            break
         end
     end
+    BusyspinnerOff()
     FreezeEntityPosition(ped, false)
     SetEntityInvincible(ped, false)
     ClearFocus()

@@ -358,14 +358,14 @@ AddEventHandler('BloodBowl.CheckpointReached', function(_type)
                         if dist <= 7.0 then
                             serverArena.activePlayers[i].score = serverArena.activePlayers[i].score + 10
                             serverArena.gameData.cpSpot = math.random(1, #originalPointsCoords)
-                            TriggerEvent('cS.MidsizeBanner', src, '~r~+10 POINTS~s~', "", 5, true)
+                            TriggerClientEvent('BloodBowl.Show_UI_Element', src, "banner", "small", "+10 POINTS", "", 6, 5, true)
                             TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
                         end
                     elseif _type == "repair" then
                         local dist = #(vector3(originalRepairCoords[serverArena.gameData.repairSpot].x, originalRepairCoords[serverArena.gameData.repairSpot].y, originalRepairCoords[serverArena.gameData.repairSpot].z) - pedCoords)
                         if dist <= 7.0 then
                             serverArena.gameData.repairSpot = math.random(1, #originalRepairCoords)
-                            TriggerEvent('cS.MidsizeBanner', src, '~b~VEHICLE REPAIRED~s~', "...not really...", 5, true)
+                            TriggerClientEvent('BloodBowl.Show_UI_Element', src, "banner", "small", "VEHICLE REPAIRED", "..not really", 9, 5, true)
                             TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
                         end
                     end
@@ -415,21 +415,6 @@ RegisterCommand('joinbot', function(source, args)
         print('bot '.._botID..' joined the arena')
     else
         print('invalid bot id')
-    end
-end)
-
-RegisterCommand('observeOriginal', function()
-    Citizen.CreateThread(function()
-        while true do
-            print("original template: gameID: "..originalGameData.gameData.gameID.." / startTime: "..originalGameData.startTimer.." / lobby players: "..#originalGameData.lobbyPlayers)
-            Citizen.Wait(200)
-        end
-    end)
-end)
-
-RegisterCommand('players', function()
-    for i,k in pairs(serverPlayers) do
-        print(i.." / "..k.name.." / "..k.inArena)
     end
 end)
 
