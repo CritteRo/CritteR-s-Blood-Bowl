@@ -130,3 +130,13 @@ AddEventHandler('BloodBowl.StartClientGameLoop', function()
         Citizen.Wait(0)
     end
 end)
+
+RegisterNetEvent('BloodBowl.DisableMyVehicle')
+AddEventHandler('BloodBowl.DisableMyVehicle', function()
+    if arenaData.status == 2 or arenaData.status == 3 then
+        if IsPedInAnyVehicle(PlayerPedId(), false) then
+            local _veh = GetVehiclePedIsIn(PlayerPedId(), false)
+            SetVehicleEngineOn(_veh, false, true, true)
+        end
+    end
+end)

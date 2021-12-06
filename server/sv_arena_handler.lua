@@ -336,6 +336,7 @@ AddEventHandler('BloodBowl.StartGame', function()
         while serverArena.status == 2 and gameID == serverArena.gameData.gameID do --main game loop. Removes one point every second.
             if serverArena.type == 0 then
                 --todo
+                local _stilActive = 0
                 for i,k in pairs(serverArena.activePlayers) do
                     if k.score > 0 then
                         if k.score >= 100 then
@@ -345,9 +346,17 @@ AddEventHandler('BloodBowl.StartGame', function()
                             TriggerClientEvent('BloodBowl.Show_UI_Element',tonumber(k.id), "caption", "Your score: ~r~"..(k.score - 1).."~s~ / "..serverArena.gameData.maxPoints..".", 1005)
                             serverArena.activePlayers[i].score = serverArena.activePlayers[i].score - 1
                         end
+                        _stilActive = _stilActive + 1
                     else
                         --fail state here. Remove player from active group to spectating
+                        TriggerClientEvent('BloodBowl.DisableMyVehicle', tonumber(k.id))
+                        serverArena.spectatingPlayers[i] = serverArena.activePlayers[i]
+                        serverArena.activePlayers[i] = nil
                     end
+                end
+                if _stilActive == 0 then
+                    serverArena.status = 3 --finish the game
+                    break
                 end
             end
             Citizen.Wait(1000)
