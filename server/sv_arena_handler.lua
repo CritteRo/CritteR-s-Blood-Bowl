@@ -274,22 +274,26 @@ AddEventHandler('BloodBowl.StartGame', function()
             serverArena.activePlayers[i] = {id = 0, name = "PlayerName", score = 30, checkpointsUsed = 0, repairsUsed = 0, finishedIntro = false}
             serverArena.activePlayers[i].name = k.name
             serverArena.activePlayers[i].id = tonumber(k.id)
+            print(serverArena.activePlayers[i].id)
         end
         serverArena.lobbyPlayers = {}
         local rows = 1
         for i,k in pairs(serverArena.activePlayers) do
+            local ped = GetPlayerPed(tonumber(k.id))
+            FreezeEntityPosition(ped, true)
+            SetEntityCoords(ped, arenaCoords['insideArena'].x, arenaCoords['insideArena'].y, arenaCoords['insideArena'].z, false, false, false, false)
             setPlayerInArena(k.id)
             gameCars[rows] = CreateArenaVehicle("deviant", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
-            gameCopilots[rows] = CreateCopilot(spawnCoords[rows])
-            while not DoesEntityExist(gameCars[rows]) and not DoesEntityExist(gameCopilots[rows]) do
+            FreezeEntityPosition(gameCars[rows], true)
+            while not DoesEntityExist(gameCars[rows]) do
                 Citizen.Wait(10)
             end
-            SetPedIntoVehicle(GetPlayerPed(tonumber(k.id)), gameCars[rows], -1)
-            SetPedIntoVehicle(gameCopilots[rows], gameCars[rows], 0)
-            FreezeEntityPosition(gameCars[rows], true)
+            gameCopilots[rows] = CreateCopilot(gameCars[rows], spawnCoords[rows], 0)
+            --SetPedIntoVehicle(ped, gameCars[rows], -1)
+            --FreezeEntityPosition(gameCars[rows], true)
             rows = rows + 1
-            TriggerClientEvent('BloodBowl.StartIntro', k.id, serverArena.type)
-            TriggerClientEvent('BloodBowl.StartClientGameLoop', k.id)
+            TriggerClientEvent('BloodBowl.StartIntro', tonumber(k.id), serverArena.type)
+            TriggerClientEvent('BloodBowl.StartClientGameLoop', tonumber(k.id))
         end
         --[[if rows < 9 then --bots
             for i=0, 9-rows do
@@ -324,8 +328,12 @@ AddEventHandler('BloodBowl.StartGame', function()
         for i,k in pairs(gameCopilots) do
             copilotsForClient[i] = NetworkGetNetworkIdFromEntity(k)
         end
-
+        local rows = 1
         for i,k in pairs(serverArena.activePlayers) do
+            local ped = GetPlayerPed(tonumber(k.id))
+            FreezeEntityPosition(ped, false)
+            SetPedIntoVehicle(ped, gameCars[rows], -1)
+            rows = rows +1
             TriggerClientEvent("cS.Countdown", tonumber(k.id), 0, 150, 200, 5, true)
             TriggerClientEvent('BloodBowl.GiveEntitiesToPlayers',tonumber(k.id), carsForClient, copilotsForClient)
         end
@@ -437,16 +445,24 @@ AddEventHandler('BloodBowl.CheckpointReached', function(_type)
                     if _type == "points" then
                         local dist = #(vector3(originalPointsCoords[serverArena.gameData.cpSpot].x, originalPointsCoords[serverArena.gameData.cpSpot].y, originalPointsCoords[serverArena.gameData.cpSpot].z) - pedCoords)
                         if dist <= 7.0 then
-                            serverArena.activePlayers[i].score = serverArena.activePlayers[i].score + 10
+                            serverArena.activePlayers[i].score = serverArena.activePlayers[i].score + 30
+                            local lastSpot = serverArena.gameData.cpSpot
                             serverArena.gameData.cpSpot = math.random(1, #originalPointsCoords)
-                            TriggerClientEvent('BloodBowl.Show_UI_Element', src, "banner", "small", "+10 POINTS", "", 6, 5, true)
+                            while lastSpot == serverArena.gameData.cpSpot do --making sure we don't spawn the same cp again
+                                serverArena.gameData.cpSpot = math.random(1, #originalPointsCoords)
+                            end
+                            TriggerClientEvent('BloodBowl.Show_UI_Element', src, "banner", "small", "+30 POINTS", "", 6, 5, true)
                             TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
                         end
                     elseif _type == "repair" then
                         local dist = #(vector3(originalRepairCoords[serverArena.gameData.repairSpot].x, originalRepairCoords[serverArena.gameData.repairSpot].y, originalRepairCoords[serverArena.gameData.repairSpot].z) - pedCoords)
                         if dist <= 7.0 then
+                            local lastSpot = serverArena.gameData.repairSpot
                             serverArena.gameData.repairSpot = math.random(1, #originalRepairCoords)
-                            TriggerClientEvent('BloodBowl.Show_UI_Element', src, "banner", "small", "VEHICLE REPAIRED", "..not really", 11, 5, true)
+                            while lastSpot == serverArena.gameData.repairSpot do --making sure we don't spawn the same cp again
+                                serverArena.gameData.repairSpot = math.random(1, #originalRepairCoords)
+                            end
+                            TriggerClientEvent('BloodBowl.Show_UI_Element', src, "banner", "small", "VEHICLE REPAIRED", "", 11, 5, true)
                             TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
                         end
                     end

@@ -136,7 +136,8 @@ AddEventHandler('BloodBowl.DisableMyVehicle', function()
     if arenaData.status == 2 or arenaData.status == 3 then
         if IsPedInAnyVehicle(PlayerPedId(), false) then
             local _veh = GetVehiclePedIsIn(PlayerPedId(), false)
-            SetVehicleEngineOn(_veh, false, true, true)
+            print(_veh)
+            BringVehicleToHalt(_veh, 3.0, 100, true)
         end
     end
 end)
