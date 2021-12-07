@@ -1,4 +1,4 @@
-SetRoutingBucketEntityLockdownMode(0, "strict") --only for testing.
+--SetRoutingBucketEntityLockdownMode(0, "strict") --only for testing.
 
 gameCars = {} --table to keep all game cars
 gameCopilots = {} --table to keep all game copilots
