@@ -281,7 +281,9 @@ AddEventHandler('BloodBowl.StartGame', function()
             setPlayerInArena(k.id)
             gameCars[rows] = CreateArenaVehicle("deviant", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
             gameCopilots[rows] = CreateCopilot(spawnCoords[rows])
-            while 
+            while not DoesEntityExist(gameCars[rows]) do
+                Citizen.Wait(10)
+            end
             SetPedIntoVehicle(GetPlayerPed(tonumber(k.id)), gameCars[rows], -1)
             SetPedIntoVehicle(gameCopilots[rows], gameCars[rows], 0)
             FreezeEntityPosition(gameCars[rows], true)
