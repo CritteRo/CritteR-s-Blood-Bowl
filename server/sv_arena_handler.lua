@@ -283,7 +283,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             FreezeEntityPosition(ped, true)
             SetEntityCoords(ped, arenaCoords['insideArena'].x, arenaCoords['insideArena'].y, arenaCoords['insideArena'].z, false, false, false, false)
             setPlayerInArena(k.id)
-            gameCars[rows] = CreateArenaVehicle("deviant", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
+            gameCars[rows] = CreateArenaVehicle("dominator6", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
             FreezeEntityPosition(gameCars[rows], true)
             serverArena.activePlayers[i].carID = gameCars[rows]
             while not DoesEntityExist(gameCars[rows]) do
