@@ -70,7 +70,3 @@ AddEventHandler('bloodBowl.UpdateOutsidePanel', function(_data)
     outsideScaleform = Scaleform.Request('MP_MISSION_NAME_FREEMODE')
     Scaleform.CallFunction(outsideScaleform, false, "SET_MISSION_INFO", outsideScaleformData.description, outsideScaleformData.name, "", '', outsideScaleformData.belowMessage, false, " "..outsideScaleformData.playersReady, outsideScaleformData.rp, outsideScaleformData.cash,"")
 end)
-
-RegisterCommand('panel', function()
-    TriggerEvent('bloodBowl.UpdateOutsidePanel', {name = "Blood Bowl", rp = 5, cash = 5, belowMessage = "~r~Game in progress~s~", playersReady = 12})
-end)

@@ -88,6 +88,7 @@ RegisterNetEvent('BloodBowl.GiveEntitiesToPlayers', function(gameCars, gamePeds)
     local pedIDS = {}
     for i,k in pairs(gameCars) do
         carIDS[i] = NetToVeh(k)
+        setEntityBlip(carIDS[i], "Enemy")
     end
     local myPlace = math.random(1,16)
     for i,k in pairs(gamePeds) do
@@ -133,6 +134,8 @@ AddEventHandler('BloodBowl.StartClientGameLoop', function()
         end
         Citizen.Wait(0)
     end
+    RemoveBlip(blip1)
+    RemoveBlip(blip2)
 end)
 
 RegisterNetEvent('BloodBowl.DisableMyVehicle')
