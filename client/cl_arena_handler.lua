@@ -37,6 +37,10 @@ AddEventHandler('BloodBowl.UpdateArenaData', function(_data)
     end
     if arenaData.status == 4 then
         _panel.description = "Arena is offline."
+        BusyspinnerOff()
+    end
+    if arenaData.status == 0 then
+        BusyspinnerOff()
     end
     if exports['critLobby']:LobbyMenuGetActiveMenu() == 'BloodBowl.MainMenu.main' then
         Citizen.Wait(200) --a simple wait, because the frontend framework is slow
@@ -59,7 +63,7 @@ RegisterNetEvent('BloodBowl.GiveEntitiesToPlayers', function(gameCars, gamePeds)
             Citizen.Wait(10)
         end
     end
-    print('Entities loaded for blood bowl')
+    --print('Entities loaded for blood bowl')
 
     local groups = {
         [1] = GetHashKey('GROUP_BLOODBOWL_TEST_1'),
@@ -136,7 +140,6 @@ AddEventHandler('BloodBowl.DisableMyVehicle', function()
     if arenaData.status == 2 or arenaData.status == 3 then
         if IsPedInAnyVehicle(PlayerPedId(), false) then
             local _veh = GetVehiclePedIsIn(PlayerPedId(), false)
-            print(_veh)
             BringVehicleToHalt(_veh, 3.0, 100, true)
         end
     end

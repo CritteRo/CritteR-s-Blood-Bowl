@@ -9,6 +9,7 @@ TextEntries = {
     {"CBB_MENU_ALERT_START_GAME_UNLOCKED", "Everyone's ready. Start the game!"},
     {"CBB_MENU_ALERT_START_GAME_COUNTDOWN", "Game starts in %i seconds..."},
     {'CBB_INTRO_SKIPPING', "Skipping intro..."},
+    {'LABEL_EXIT_ARENA', "Exiting arena..."},
 }
 
 AddEventHandler('bloodBowl.GenerateTextEntries', function(_customEntries)

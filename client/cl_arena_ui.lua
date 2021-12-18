@@ -151,9 +151,14 @@ AddEventHandler("BloodBowl.FinaleUI", function(_initialText, _table, _money, _xp
         PlaySoundFrontend(-1, "CHECKPOINT_PERFECT", "HUD_MINI_GAME_SOUNDSET", 1)
     end
     BuildAndShowEndScreen(_initialText, _table, _money, _xp)
+    TriggerScreenblurFadeIn(1000)
+    BeginTextCommandBusyspinnerOn("STRING")
+    AddTextComponentSubstringPlayerName(GetLabelText('LABEL_EXIT_ARENA'))
+    EndTextCommandBusyspinnerOn(1)
     Citizen.CreateThread(function()
         Citizen.Wait(tonumber(_waitTime) * 1000)
         showHeistBanner = false
+        TriggerScreenblurFadeOut(1000)
     end)
 end)
 

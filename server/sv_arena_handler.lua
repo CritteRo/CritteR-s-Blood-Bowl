@@ -190,7 +190,7 @@ AddEventHandler('BloodBowl.StartGameCountdown', function()
         --start countdown.
         serverArena.status = 1
         while serverArena.status == 1 do
-            print(serverArena.startTimer)
+            --print(serverArena.startTimer)
             if serverArena.startTimer > 0 then
                 serverArena.startTimer = serverArena.startTimer - 1
             else
@@ -274,7 +274,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             serverArena.activePlayers[i] = {id = 0, name = "PlayerName", score = 30, checkpointsUsed = 0, repairsUsed = 0, finishedIntro = false}
             serverArena.activePlayers[i].name = k.name
             serverArena.activePlayers[i].id = tonumber(k.id)
-            print(serverArena.activePlayers[i].id)
+            --print(serverArena.activePlayers[i].id)
         end
         serverArena.lobbyPlayers = {}
         local rows = 1
@@ -394,6 +394,7 @@ AddEventHandler('BloodBowl.StartGame', function()
         end
 
         for i,k in pairs(serverArena.activePlayers) do
+            TriggerClientEvent('BloodBowl.DisableMyVehicle', tonumber(k.id))
             local _initialText = { --first slide. Consists of 3 text lines.
                 missionTextLabel = "BLOOD BOWL: ORIGINAL", 
                 passFailTextLabel = "WINNER!",
@@ -406,6 +407,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             TriggerClientEvent("BloodBowl.FinaleUI", tonumber(k.id), _initialText, _activeTable, {startMoney = 0, finishMoney = 0}, {xpGained = 0}, (1 + #_activeTable * 1.5 + 2), true)
         end
         for i,k in pairs(serverArena.spectatingPlayers) do
+            TriggerClientEvent('BloodBowl.DisableMyVehicle', tonumber(k.id))
             local _initialText = { --first slide. Consists of 3 text lines.
                 missionTextLabel = "BLOOD BOWL: ORIGINAL", 
                 passFailTextLabel = "GAME OVER!",
