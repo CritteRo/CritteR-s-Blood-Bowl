@@ -78,7 +78,7 @@ function BuildAndShowEndScreen(ZinitialText, Ztable, Zmoney, Zxp)
             }
 
             for key, scaleform_handle in pairs(scaleform_list) do
-                Scaleform.CallFunction(scaleform_handle, false, "CREATE_STAT_WALL", 1, "HUD_COLOUR_FREEMODE_DARK", 1)
+                Scaleform.CallFunction(scaleform_handle, false, "CREATE_STAT_WALL", 1, "HUD_COLOUR_BLACK", 1)
                 Scaleform.CallFunction(scaleform_handle, false, "ADD_BACKGROUND_TO_WALL", 1, 80, 1)
     
                 --this should be used as it's own scaleform event.
@@ -121,28 +121,6 @@ function BuildAndShowEndScreen(ZinitialText, Ztable, Zmoney, Zxp)
         StartScreenEffect("HeistCelebToast")
     end)
 end
-
-RegisterCommand('ends', function()
-    local _initialText = { --first slide. Consists of 3 text lines.
-    missionTextLabel = "BLOOD BOWL: ORIGINAL", 
-    passFailTextLabel = "WINNER!",
-    messageLabel = "",
-    }
-    local _table = { --second slide. You can add as many "stats" as you want. They will appear from botton to top, so keep that in mind.
-        {stat = "CritteR", value = "~y~1st Place~s~"},
-        {stat = "NTT", value = "~w~2nd Place~s~"},
-        --{stat = "sgnf", value = "~r~3rd Place~s~"},
-        --{stat = "ndfg", value = "~r~3rd Place~s~"},
-        --{stat = "NadgfsvdgvasdTT", value = "~r~3rd Place~s~"},
-        --{stat = "NfgdbsfbfdsTT", value = "~r~3rd Place~s~"},
-        --{stat = "NnsgfnghdnfghmjhTT", value = "~r~3rd Place~s~"},
-
-        --{stat = "value2", value = "~b~1999~s~"},
-        --{stat = "value1", value = "TEST"},
-    }
-    --BuildAndShowEndScreen(_initialText, _table, {startMoney = 0, finishMoney = 0}, {xpGained = 0})
-    TriggerEvent("BloodBowl.FinaleUI", _initialText, _table, {startMoney = 0, finishMoney = 0}, {xpGained = 0}, (1 + #_table * 1.5 + 1), true)
-end)
 
 RegisterNetEvent('BloodBowl.FinaleUI')
 AddEventHandler("BloodBowl.FinaleUI", function(_initialText, _table, _money, _xp, _waitTime, _playSound)
