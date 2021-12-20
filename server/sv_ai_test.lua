@@ -1,22 +1,3 @@
-RegisterCommand('bloodbowl', function(source, args)
-    local src = source
-    local cars = {}
-    local peds = {}
-    for i,k in pairs(spawnCoords) do
-        cars[i] = spawnVehicle('deviant', k.x, k.y, k.z, k.h, 0.0,0.0,false, false)
-        peds[i] ={
-            driver = spawnPed(k),
-            shotgun = spawnPed(k),
-        }
-        SetPedIntoVehicle(peds[i].driver, cars[i], -1)
-        SetPedIntoVehicle(peds[i].shotgun, cars[i], 0)
-        cars[i] =  NetworkGetNetworkIdFromEntity(cars[i])
-        peds[i].driver = NetworkGetNetworkIdFromEntity(peds[i].driver)
-        peds[i].shotgun = NetworkGetNetworkIdFromEntity(peds[i].shotgun)
-    end
-    TriggerClientEvent('test.SendPedAndCarToClient2', src, cars, peds)
-end)
-
 
 function spawnVehicle(_model, _x, _y, _z, _h, _col1, _col2, _alarm, _isAmbient)
     local carId = CreateVehicle(_model, _x, _y, _z, _h, true, false)
