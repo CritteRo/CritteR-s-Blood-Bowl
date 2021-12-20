@@ -357,6 +357,9 @@ AddEventHandler('BloodBowl.StartGame', function()
                         else
                             TriggerClientEvent('BloodBowl.Show_UI_Element',tonumber(k.id), "caption", "Your score: ~r~"..(k.score - 1).."~s~ / "..serverArena.gameData.maxPoints..".", 1005)
                             serverArena.activePlayers[i].score = serverArena.activePlayers[i].score - 1
+                            if serverArena.activePlayers[i].score <= 7 then
+                                TriggerClientEvent('BloodBowl.YouAreAboutToLose', tonumber(k.id), serverArena.activePlayers[i].score)
+                            end
                         end
                         _stilActive = _stilActive + 1
                     else
