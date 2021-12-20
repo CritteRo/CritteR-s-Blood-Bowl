@@ -214,7 +214,3 @@ AddEventHandler('BloodBowl.YouAreAboutToLose', function(_points)
         PlaySoundFrontend(-1, "LOOSE_MATCH", "HUD_MINI_GAME_SOUNDSET", 1)
     end
 end)
-
-RegisterCommand('testaudio', function(source, args)
-    PlaySoundFrontend(-1, args[1], args[2], 1)
-end)
