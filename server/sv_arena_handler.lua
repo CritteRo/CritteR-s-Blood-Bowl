@@ -468,7 +468,7 @@ AddEventHandler('BloodBowl.CheckpointReached', function(_type)
                             while lastSpot == serverArena.gameData.repairSpot do --making sure we don't spawn the same cp again
                                 serverArena.gameData.repairSpot = math.random(1, #originalRepairCoords)
                             end
-                            SetVehicleBodyHealth(serverArena.activePlayers[src].carID, 1000.0)
+                            SetVehicleBodyHealth(serverArena.activePlayers[i].carID, 1000.0)
                             TriggerClientEvent('BloodBowl.Show_UI_Element', src, "banner", "small", "VEHICLE REPAIRED", "", 11, 5, true)
                             TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
                         end

@@ -1,8 +1,7 @@
 ---------------------------------------------------------------------------------------
---			Arena Resource by Titch2000 You may edit but please keep credit.
+--			Arena Interior Resource by Titch2000
 ---------------------------------------------------------------------------------------
---          Connections wrote by CritteR, for "CritteR's Blood Bowl"
----------------------------------------------------------------------------------------
+
 local map = 2
 local scene = "dystopian"
 
@@ -54,19 +53,6 @@ local maps = {
 	}
 }
 
-function giveWeapon(hash)
-    if(hash == "parachute") then
-        GiveWeaponToPed(PlayerPedId(), GetHashKey(string.format("gadget_%s", hash)), 1, false, false)
-    else
-        GiveWeaponToPed(PlayerPedId(), GetHashKey(string.format("weapon_%s", hash)), 999, false, false)
-        --SetPedInfiniteAmmo(PlayerPedId(), true, GetHashKey(string.format("weapon_%s", hash)))
-    end
-  end
-
-RegisterCommand('gun2', function()
-    giveWeapon('compactlauncher')
-end)
-
 Citizen.CreateThread(function()
 	-- New Arena : 2800.00, -3800.00, 100.00
 	RequestIpl("xs_arena_interior")
@@ -96,17 +82,14 @@ Citizen.CreateThread(function()
 	-- now lets set our map type and scene.
 	if (scene == "dystopian") then
 		EnableInteriorProp(interiorID, "Set_Dystopian_Scene")
-		print("[Arena by Titch]: enabling map: "..maps[scene][map])
 		EnableInteriorProp(interiorID, maps[scene][map])
 	end
 	if (scene == "scifi") then
 		EnableInteriorProp(interiorID, "Set_Scifi_Scene")
-		print("[Arena by Titch]: enabling map: "..maps[scene][map])
 		EnableInteriorProp(interiorID, maps[scene][map])
 	end
 	if (scene == "wasteland") then
 		EnableInteriorProp(interiorID, "Set_Wasteland_Scene")
-		print("[Arena by Titch]: enabling map: "..maps[scene][map])
 		EnableInteriorProp(interiorID, maps[scene][map])
 	end
 end)

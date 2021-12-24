@@ -121,8 +121,8 @@ AddEventHandler('BloodBowl.StartClientGameLoop', function()
         local rprDist = #(vector3(rprCoords[repairSpot].x, rprCoords[repairSpot].y, rprCoords[repairSpot].z) - GetEntityCoords(ped))
 
         if updateCheckpointsThisFrame == true then
-            setCheckpoint("repair", 11, rprCoords[repairSpot].x, rprCoords[repairSpot].y, rprCoords[repairSpot].z, 0.0, 0.0, 0.0, 6.0, 60, 60, 255, 240)
-            setCheckpoint("points", 47, pointCoords[pointSpot].x, pointCoords[pointSpot].y, pointCoords[pointSpot].z, 0.0, 0.0, 0.0, 6.0, 255, 60, 60, 240)
+            setCheckpoint("repair", 11, rprCoords[repairSpot].x, rprCoords[repairSpot].y, rprCoords[repairSpot].z+2.0, 0.0, 0.0, 0.0, 6.0, 60, 60, 255, 240)
+            setCheckpoint("points", 47, pointCoords[pointSpot].x, pointCoords[pointSpot].y, pointCoords[pointSpot].z-2.0, 0.0, 0.0, 0.0, 6.0, 255, 60, 60, 240)
             updateCheckpointsThisFrame = false
         end
         if pointDist <= 6.0 then
