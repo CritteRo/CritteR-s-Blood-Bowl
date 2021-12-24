@@ -283,13 +283,13 @@ AddEventHandler('BloodBowl.StartGame', function()
             FreezeEntityPosition(ped, true)
             SetEntityCoords(ped, arenaCoords['insideArena'].x, arenaCoords['insideArena'].y, arenaCoords['insideArena'].z, false, false, false, false)
             setPlayerInArena(k.id)
-            gameCars[rows] = CreateArenaVehicle("dominator6", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
+            gameCars[rows] = CreateArenaVehicle("technical2", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
             FreezeEntityPosition(gameCars[rows], true)
             serverArena.activePlayers[i].carID = gameCars[rows]
             while not DoesEntityExist(gameCars[rows]) do
                 Citizen.Wait(10)
             end
-            gameCopilots[rows] = CreateCopilot(gameCars[rows], spawnCoords[rows], 0)
+            gameCopilots[rows] = CreateCopilot(gameCars[rows], spawnCoords[rows], 1)
             --SetPedIntoVehicle(ped, gameCars[rows], -1)
             --FreezeEntityPosition(gameCars[rows], true)
             rows = rows + 1
@@ -298,9 +298,9 @@ AddEventHandler('BloodBowl.StartGame', function()
         end
         --[[if rows < 9 then --bots
             for i=0, 9-rows do
-                gameCars[rows] = CreateArenaVehicle("deviant", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
+                gameCars[rows] = CreateArenaVehicle("technical2", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
                 gameCopilots[rows] = CreateCopilot(spawnCoords[rows])
-                SetPedIntoVehicle(gameCopilots[rows], gameCars[rows], 0)
+                SetPedIntoVehicle(gameCopilots[rows], gameCars[rows], 1)
                 FreezeEntityPosition(gameCars[rows], true)
                 rows = rows + 1
             end
@@ -385,13 +385,13 @@ AddEventHandler('BloodBowl.StartGame', function()
         for k,v in spairs(serverArena.activePlayers, function(t,a,b) return t[b].checkpointsUsed < t[a].checkpointsUsed end) do
             --print(k,v.checkpointsUsed)
             if row_ == 1 then
-                _activeTable[row_] = {stat = v.name, value = "~y~"..row_..". "..v.score.." Remaining score~s~"}
+                _activeTable[row_] = {stat = v.name, value = "~y~"..row_..". "..v.score.." Remaining score~s~", score = v.score}
             elseif row_ == 2 then
-                _activeTable[row_] = {stat = v.name, value = "~w~"..row_..". "..v.score.." Remaining score~s~"}
+                _activeTable[row_] = {stat = v.name, value = "~w~"..row_..". "..v.score.." Remaining score~s~", score = v.score}
             elseif row_ == 3 then
-                _activeTable[row_] = {stat = v.name, value = "~r~"..row_..". "..v.score.." Remaining score~s~"}
+                _activeTable[row_] = {stat = v.name, value = "~r~"..row_..". "..v.score.." Remaining score~s~", score = v.score}
             else
-                _activeTable[row_] = {stat = v.name, value = row_..". "..v.score.." Remaining score~s~"}
+                _activeTable[row_] = {stat = v.name, value = row_..". "..v.score.." Remaining score~s~", score = v.score}
             end
             row_ = row_ + 1
         end
@@ -420,6 +420,7 @@ AddEventHandler('BloodBowl.StartGame', function()
         end
 
         Citizen.Wait(10000) --wait 10 seconds, then restart arena.
+        TriggerEvent('BloodBowl.ArenaFinished', _activeTable, serverArena.spectatingPlayers) --arg 1 = remaining players, including the winner, ordered DESC by points, arg 2 = players still in arena, who remained with 0 points.
         forceRestartArena(false, true, false, 0, 0)
     end
 end)
@@ -473,7 +474,8 @@ AddEventHandler('BloodBowl.CheckpointReached', function(_type)
                             TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
                         end
                     end
-                    break
+                else
+                    serverArena.activePlayers[i].score = serverArena.activePlayers[i].score + 5 -- we give all cars a +5 seconds, because we are nice, and games end too fast otherwise.
                 end
             end
         end
