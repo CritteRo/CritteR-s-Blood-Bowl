@@ -51,7 +51,7 @@ AddEventHandler('BloodBowl.UpdateArenaData', function(_data)
 end)
 
 RegisterNetEvent('BloodBowl.GiveEntitiesToPlayers')
-RegisterNetEvent('BloodBowl.GiveEntitiesToPlayers', function(gameCars, gamePeds)
+RegisterNetEvent('BloodBowl.GiveEntitiesToPlayers', function(gameCars, gamePeds, gamePeds2)
     for i,k in pairs(gamePeds) do
         while IsEntityAPed(NetToPed(k)) == false do
             Citizen.Wait(10)
@@ -93,12 +93,27 @@ RegisterNetEvent('BloodBowl.GiveEntitiesToPlayers', function(gameCars, gamePeds)
     local myPlace = math.random(1,16)
     for i,k in pairs(gamePeds) do
         pedIDS[i] = NetToPed(k)
+        SetEntityMaxHealth(pedIDS[i], 9999)
+        SetEntityHealth(pedIDS[i], 9999)
         SetPedInfiniteAmmo(pedIDS[i], true, "weapon_microsmg")
         SetPedCombatAttributes(pedIDS[i], 2, true)
         SetPedCombatAttributes(pedIDS[i], 46, true)
         SetPedCombatAttributes(pedIDS[i], 3, false)
         SetPedCombatRange(pedIDS[i], 2)
         SetPedRelationshipGroupHash(pedIDS[i], groups[i])
+    end
+
+    for i,k in pairs(gamePeds2) do
+
+        SetEntityMaxHealth(k, 9999)
+        SetEntityHealth(k, 9999)
+        SetPedInfiniteAmmo(k, true, "weapon_microsmg")
+        SetPedCombatAttributes(k, 2, true)
+        SetPedCombatAttributes(k, 46, true)
+        SetPedCombatAttributes(k, 3, false)
+        SetPedCombatRange(k, 2)
+        SetPedRelationshipGroupHash(k, groups[i])
+        TaskVehicleDriveWander(k, carIDS[i], math.random(25,35)+0.01, 1074528293)
     end
 end)
 

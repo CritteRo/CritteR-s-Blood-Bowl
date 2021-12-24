@@ -5,15 +5,15 @@ function ShowMainMenu(_data, _actuallyOpen)
     TriggerEvent('lobbymenu:SetHeaderDetails', 'BloodBowl.MainMenu.main', true, true, 2, 6, 0)
 
     if _data.type == 0 then
-        TriggerEvent('lobbymenu:SetDetailsTitle', 'BloodBowl.MainMenu.main', "Blood Bowl: Original", 'textureDirectory', 'textureName')
+        TriggerEvent('lobbymenu:SetDetailsTitle', 'BloodBowl.MainMenu.main', "Blood Bowl: Original", 'bb_textures', 'main_menu')
         TriggerEvent('lobbymenu:AddDetailsRow', 'BloodBowl.MainMenu.main', "Starting Points", 30)
         TriggerEvent('lobbymenu:AddDetailsRow', 'BloodBowl.MainMenu.main', "Target Points", 100)
         TriggerEvent('lobbymenu:AddDetailsRow', 'BloodBowl.MainMenu.main', "Lose:", "0 Points")
         TriggerEvent('lobbymenu:AddDetailsRow', 'BloodBowl.MainMenu.main', "1 point is removed every second.", "")
-        TriggerEvent('lobbymenu:AddDetailsRow', 'BloodBowl.MainMenu.main', "~r~Red Markers~s~ gives 10 points", "")
+        TriggerEvent('lobbymenu:AddDetailsRow', 'BloodBowl.MainMenu.main', "~r~Red Markers~s~ gives 30 points", "")
         TriggerEvent('lobbymenu:AddDetailsRow', 'BloodBowl.MainMenu.main', "~b~Blue Markers~s~ repairs your vehicle.", "")
-    elseif _data.type == 1 then
-        TriggerEvent('lobbymenu:SetDetailsTitle', 'BloodBowl.MainMenu.main', "Blood Bowl: ~g~Infected~s~", 'textureDirectory', 'textureName')
+    elseif _data.type == 1 then --never used, btw
+        TriggerEvent('lobbymenu:SetDetailsTitle', 'BloodBowl.MainMenu.main', "Blood Bowl: ~g~Infected~s~", 'bb_textures', 'main_menu')
         TriggerEvent('lobbymenu:AddDetailsRow', 'BloodBowl.MainMenu.main', "Two teams: ~g~Infected~s~ and ~b~Survivors~s~", "")
         TriggerEvent('lobbymenu:AddDetailsRow', 'BloodBowl.MainMenu.main', "One person is ~g~infected at the start.", "")
         TriggerEvent('lobbymenu:AddDetailsRow', 'BloodBowl.MainMenu.main', "Game ends when everyone is infected.", "")

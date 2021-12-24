@@ -2,6 +2,7 @@
 
 gameCars = {} --table to keep all game cars
 gameCopilots = {} --table to keep all game copilots
+gameDrivers = {} --table to keep all game bot drivers
 
 serverArena = { 
     status = 0, --0 = Open, waiting for players, 1 = starting, 2 = in game, 3 = ending, 4 = offline
@@ -283,28 +284,28 @@ AddEventHandler('BloodBowl.StartGame', function()
             FreezeEntityPosition(ped, true)
             SetEntityCoords(ped, arenaCoords['insideArena'].x, arenaCoords['insideArena'].y, arenaCoords['insideArena'].z, false, false, false, false)
             setPlayerInArena(k.id)
-            gameCars[rows] = CreateArenaVehicle("technical2", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
+            gameCars[rows] = CreateArenaVehicle("dune3", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
             FreezeEntityPosition(gameCars[rows], true)
             serverArena.activePlayers[i].carID = gameCars[rows]
             while not DoesEntityExist(gameCars[rows]) do
                 Citizen.Wait(10)
             end
-            gameCopilots[rows] = CreateCopilot(gameCars[rows], spawnCoords[rows], 1)
+            gameCopilots[rows] = CreateCopilot(gameCars[rows], spawnCoords[rows], 0)
             --SetPedIntoVehicle(ped, gameCars[rows], -1)
             --FreezeEntityPosition(gameCars[rows], true)
             rows = rows + 1
             TriggerClientEvent('BloodBowl.StartIntro', tonumber(k.id), serverArena.type)
             TriggerClientEvent('BloodBowl.StartClientGameLoop', tonumber(k.id))
         end
-        --[[if rows < 9 then --bots
+        if rows < 9 then --bots
             for i=0, 9-rows do
-                gameCars[rows] = CreateArenaVehicle("technical2", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
-                gameCopilots[rows] = CreateCopilot(spawnCoords[rows])
-                SetPedIntoVehicle(gameCopilots[rows], gameCars[rows], 1)
+                gameCars[rows] = CreateArenaVehicle("dune3", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
+                gameCopilots[rows] = CreateCopilot(gameCars[rows], spawnCoords[rows], 0)
+                gameDrivers[rows] = CreateCopilot(gameCars[rows], spawnCoords[rows], -1)
                 FreezeEntityPosition(gameCars[rows], true)
                 rows = rows + 1
             end
-        end]]
+        end
         local gameID = serverArena.gameData.gameID
         while serverArena.status == 2 and gameID == serverArena.gameData.gameID do --wait for everyone to watch the intro..
             local allReady = true
@@ -323,11 +324,15 @@ AddEventHandler('BloodBowl.StartGame', function()
 
         local carsForClient = {}
         local copilotsForClient = {}
+        local driversForClient = {}
         for i,k in pairs(gameCars) do
             carsForClient[i] = NetworkGetNetworkIdFromEntity(k)
         end
         for i,k in pairs(gameCopilots) do
             copilotsForClient[i] = NetworkGetNetworkIdFromEntity(k)
+        end
+        for i,k in pairs(gameDrivers) do
+            driversForClient[i] = NetworkGetNetworkIdFromEntity(k)
         end
         local rows = 1
         for i,k in pairs(serverArena.activePlayers) do
@@ -336,7 +341,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             SetPedIntoVehicle(ped, gameCars[rows], -1)
             rows = rows +1
             TriggerClientEvent("cS.Countdown", tonumber(k.id), 0, 150, 200, 5, true)
-            TriggerClientEvent('BloodBowl.GiveEntitiesToPlayers',tonumber(k.id), carsForClient, copilotsForClient)
+            TriggerClientEvent('BloodBowl.GiveEntitiesToPlayers',tonumber(k.id), carsForClient, copilotsForClient, driversForClient)
         end
 
         Citizen.Wait(5000)

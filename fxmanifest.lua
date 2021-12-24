@@ -26,3 +26,7 @@ server_scripts {
 shared_scripts {
     'shared/sh_arena_utils.lua',
 }
+
+stream {
+    'bb_textures.ytd',
+}
