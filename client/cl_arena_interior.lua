@@ -3,7 +3,7 @@
 ---------------------------------------------------------------------------------------
 --          Connections wrote by CritteR, for "CritteR's Blood Bowl"
 ---------------------------------------------------------------------------------------
-local map = 1
+local map = 2
 local scene = "dystopian"
 
 local maps = {
