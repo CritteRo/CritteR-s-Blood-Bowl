@@ -61,6 +61,7 @@ AddEventHandler('onResourceStart', function(_name) --make sure we register ALL O
         for _,src in ipairs(GetPlayers()) do
             CreateNewPlayerData(src)
         end
+        forceRestartArena(false, true, false, 0, 0)
     end
 end)
 
@@ -284,7 +285,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             FreezeEntityPosition(ped, true)
             SetEntityCoords(ped, arenaCoords['insideArena'].x, arenaCoords['insideArena'].y, arenaCoords['insideArena'].z, false, false, false, false)
             setPlayerInArena(k.id)
-            gameCars[rows] = CreateArenaVehicle("dune3", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
+            gameCars[rows] = CreateArenaVehicle("monster3", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
             FreezeEntityPosition(gameCars[rows], true)
             serverArena.activePlayers[i].carID = gameCars[rows]
             while not DoesEntityExist(gameCars[rows]) do
@@ -297,15 +298,16 @@ AddEventHandler('BloodBowl.StartGame', function()
             TriggerClientEvent('BloodBowl.StartIntro', tonumber(k.id), serverArena.type)
             TriggerClientEvent('BloodBowl.StartClientGameLoop', tonumber(k.id))
         end
+        --[[
         if rows < 9 then --bots
             for i=0, 9-rows do
-                gameCars[rows] = CreateArenaVehicle("dune3", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
+                gameCars[rows] = CreateArenaVehicle("monster3", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
                 gameCopilots[rows] = CreateCopilot(gameCars[rows], spawnCoords[rows], 0)
                 gameDrivers[rows] = CreateCopilot(gameCars[rows], spawnCoords[rows], -1)
                 FreezeEntityPosition(gameCars[rows], true)
                 rows = rows + 1
             end
-        end
+        end]]
         local gameID = serverArena.gameData.gameID
         while serverArena.status == 2 and gameID == serverArena.gameData.gameID do --wait for everyone to watch the intro..
             local allReady = true
