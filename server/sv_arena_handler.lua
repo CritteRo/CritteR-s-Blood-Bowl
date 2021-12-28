@@ -137,7 +137,7 @@ end
 
 RegisterCommand('newarena', function(source, args)
     forceRestartArena(false, true, false, 0, 0)
-end)
+end, true)
 
 RegisterNetEvent('BloodBowl.SetReady')
 AddEventHandler('BloodBowl.SetReady', function(_bool, _isBot)
@@ -285,7 +285,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             FreezeEntityPosition(ped, true)
             SetEntityCoords(ped, arenaCoords['insideArena'].x, arenaCoords['insideArena'].y, arenaCoords['insideArena'].z, false, false, false, false)
             setPlayerInArena(k.id)
-            gameCars[rows] = CreateArenaVehicle("monster3", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
+            gameCars[rows] = CreateArenaVehicle("issi5", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
             FreezeEntityPosition(gameCars[rows], true)
             serverArena.activePlayers[i].carID = gameCars[rows]
             while not DoesEntityExist(gameCars[rows]) do
@@ -301,7 +301,7 @@ AddEventHandler('BloodBowl.StartGame', function()
         --[[
         if rows < 9 then --bots
             for i=0, 9-rows do
-                gameCars[rows] = CreateArenaVehicle("monster3", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
+                gameCars[rows] = CreateArenaVehicle("issi5", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
                 gameCopilots[rows] = CreateCopilot(gameCars[rows], spawnCoords[rows], 0)
                 gameDrivers[rows] = CreateCopilot(gameCars[rows], spawnCoords[rows], -1)
                 FreezeEntityPosition(gameCars[rows], true)

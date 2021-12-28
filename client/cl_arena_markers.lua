@@ -4,8 +4,8 @@ outsideScaleformData = {
     name = "Blood Bowl",
     description = "Enter Arena",
     playersReady = 6,
-    rp = 1, --if set to 0, it will need a restart to work again.
-    cash = 1, --if set to 0, it will need a restart to work again.
+    rp = 0, --if set to 0, it will need a restart to work again.
+    cash = 0, --if set to 0, it will need a restart to work again.
     belowMessage = "Game in Progress",
 }
 
