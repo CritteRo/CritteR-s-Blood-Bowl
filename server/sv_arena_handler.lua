@@ -342,7 +342,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             FreezeEntityPosition(ped, false)
             SetPedIntoVehicle(ped, gameCars[rows], -1)
             rows = rows +1
-            TriggerClientEvent("cS.Countdown", tonumber(k.id), 0, 150, 200, 5, true)
+            TriggerClientEvent("BloodBowl.Countdown", tonumber(k.id), 0, 150, 200, 5, true)
             TriggerClientEvent('BloodBowl.GiveEntitiesToPlayers',tonumber(k.id), carsForClient, copilotsForClient, driversForClient)
         end
 

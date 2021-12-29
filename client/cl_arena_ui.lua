@@ -64,6 +64,15 @@ function BuildAndShowCreditsBlock(_role, _name, _x, _y)
     end)
 end
 
+function BuildCountdown(_number, _r, _g, _b)
+    local scaleform = Scaleform.Request('COUNTDOWN')
+
+    Scaleform.CallFunction(scaleform, false, "SET_MESSAGE", _number, _r, _g, _b, true)
+    Scaleform.CallFunction(scaleform, false, "FADE_MP", _number, _r, _g, _b)
+
+    return scaleform
+end
+
 function BuildAndShowEndScreen(ZinitialText, Ztable, Zmoney, Zxp)
     Citizen.CreateThread(function()
         function drawHeist(_initialText, _table, _money, _xp)
@@ -137,6 +146,37 @@ AddEventHandler("BloodBowl.FinaleUI", function(_initialText, _table, _money, _xp
         Citizen.Wait(tonumber(_waitTime) * 1000)
         showHeistBanner = false
         TriggerScreenblurFadeOut(1000)
+    end)
+end)
+
+RegisterNetEvent('BloodBowl.Countdown')
+AddEventHandler("BloodBowl.Countdown", function(_r, _g, _b, _waitTime, _playSound)
+    local showCD = true
+    local time = _waitTime
+    local scale = 0
+    if _playSound ~= nil and _playSound == true then
+        PlaySoundFrontend(-1, "CHECKPOINT_PERFECT", "HUD_MINI_GAME_SOUNDSET", 1)
+    end
+    scale = showCountdown(time, _r, _g, _b)
+    Citizen.CreateThread(function()
+        while showCD do
+            Citizen.Wait(1000)
+            if time > 1 then
+                time = time - 1
+                scale = BuildCountdown(time, _r, _g, _b)
+            elseif time == 1 then
+                time = time - 1
+                scale = BuildCountdown("GO", _r, _g, _b)
+            else
+                showCD = false
+            end
+        end
+    end)
+    Citizen.CreateThread(function()
+        while showCD do
+            Citizen.Wait(1)
+            DrawScaleformMovieFullscreen(scale, 255, 255, 255, 255)
+        end
     end)
 end)
 

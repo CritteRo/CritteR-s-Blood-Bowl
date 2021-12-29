@@ -18,6 +18,10 @@ function CreateArenaVehicle(_model, _x, _y, _z, _h, _col1, _col2, _alarm, _isAmb
     local carId = CreateVehicle(_model, _x, _y, _z, _h, true, false)
     SetVehicleAlarm(carId, _alarm)
     SetVehicleColours(carId, _col1, _col2)
+    ---state bag used only in my main server, not really needed for this gamemode---
+    local state = Entity(carId).state
+    state.isTrafficVehicle = false
+    ---state bag used only in my main server, not really needed for this gamemode---
     while not DoesEntityExist(carId) do
         Citizen.Wait(0)
         print('waiting for car...')
