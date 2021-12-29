@@ -279,6 +279,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             --print(serverArena.activePlayers[i].id)
         end
         serverArena.lobbyPlayers = {}
+        TriggerEvent('BloodBowl.Hook.ArenaStarted', serverArena.activePlayers)
         local rows = 1
         for i,k in pairs(serverArena.activePlayers) do
             local ped = GetPlayerPed(tonumber(k.id))
@@ -522,6 +523,9 @@ function GetPlayerInArenaValue(_pID)
     return data
 end
 
+--[[
+    HOOKS. YOU CAN USE THEM IN YOUR OWN SCRIPTS.
+
 AddEventHandler('BloodBowl.Hook.ArenaFinished', function(_table1, _table2)
     --table1 = players who still had points when the arena ended, including the winner.
     for i,k in pairs(_table1) do
@@ -532,6 +536,17 @@ AddEventHandler('BloodBowl.Hook.ArenaFinished', function(_table1, _table2)
         print('name: '..k.name.." | src: "..k.id.." | cpUsed: "..k.checkpointsUsed.." | rpUsed: "..k.repairsUsed)
     end
 end)
+
+AddEventHandler('BloodBowl.Hook.ArenaStarted', function(_table1)
+    --table1 = pall players who entered the arena.
+    for i,k in pairs(_table1) do
+        print('name: '..k.name.." | src: "..k.id)
+    end
+end)
+
+]]
+
+
 
 --[[
     Test commands, should really be used.
