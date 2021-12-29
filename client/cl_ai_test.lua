@@ -1,6 +1,8 @@
 local carID = 0
 local pedID = 0
 
+--We actually use 'BloodBowl.CreateGroups', to create the relationship groups needed for the copilot behavior.
+
 AddEventHandler('BloodBowl.CreateGroups', function()
     AddRelationshipGroup('GROUP_BLOODBOWL_TEST_1')
     AddRelationshipGroup('GROUP_BLOODBOWL_TEST_2')
@@ -33,10 +35,7 @@ end)
 TriggerEvent('BloodBowl.CreateGroups')
 
 
-RegisterCommand('day', function()
-    NetworkOverrideClockTime(12,1,1)
-end)
-
+--[[
 RegisterNetEvent('test.SendPedAndCarToClient2')
 AddEventHandler('test.SendPedAndCarToClient2', function(cars, peds)
     for i,k in pairs(peds) do
@@ -107,3 +106,8 @@ AddEventHandler('test.SendPedAndCarToClient2', function(cars, peds)
         end
     end
 end)
+
+more test code here, don't worry about it.
+
+
+]]

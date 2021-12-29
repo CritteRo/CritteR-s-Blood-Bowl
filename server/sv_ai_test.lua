@@ -1,4 +1,4 @@
-
+--[[
 function spawnVehicle(_model, _x, _y, _z, _h, _col1, _col2, _alarm, _isAmbient)
     local carId = CreateVehicle(_model, _x, _y, _z, _h, true, false)
     SetVehicleAlarm(carId, _alarm)
@@ -22,3 +22,9 @@ function spawnPed(coords)
     --MarkServerEntityAsNoLongerNeeded(ped)
     return ped
 end
+
+
+UHHH, test code, nice.
+
+
+]]

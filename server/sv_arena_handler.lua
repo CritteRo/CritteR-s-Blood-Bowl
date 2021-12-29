@@ -299,6 +299,9 @@ AddEventHandler('BloodBowl.StartGame', function()
             TriggerClientEvent('BloodBowl.StartClientGameLoop', tonumber(k.id))
         end
         --[[
+            --this for loop checks if the arena is half-full, and if not, add driver bots, with copilots.
+            --those bots should technically wonder around the map, just like in GTA:SA, and annoy you.
+            --I...I couldn't get them to leave the spawn area. They just drive in circles there.
         if rows < 9 then --bots
             for i=0, 9-rows do
                 gameCars[rows] = CreateArenaVehicle("issi5", spawnCoords[rows].x, spawnCoords[rows].y, spawnCoords[rows].z, spawnCoords[rows].h, math.random(1,128), math.random(1,128), false, true)
@@ -516,6 +519,9 @@ function GetPlayerInArenaValue(_pID)
     return data
 end
 
+--[[
+    Test commands, should really be used.
+
 RegisterCommand('forceUpdate', function(source, args)
     TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
 end)
@@ -552,3 +558,5 @@ RegisterCommand('readybot', function(source, args)
         print('invalid bot id')
     end
 end)
+
+]]
