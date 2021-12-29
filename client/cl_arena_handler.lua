@@ -47,7 +47,7 @@ AddEventHandler('BloodBowl.UpdateArenaData', function(_data)
         ShowMainMenu(arenaData, false)
         TriggerEvent('lobbymenu:ReloadMenu')
     end
-    TriggerEvent('bloodBowl.UpdateOutsidePanel', {name = _panel.name, rp = 1, cash = 1, belowMessage = _panel.belowMessage, playersReady = _panel.playersReady, description = _panel.description})
+    TriggerEvent('bloodBowl.UpdateOutsidePanel', {name = _panel.name, rp = 0, cash = 0, belowMessage = _panel.belowMessage, playersReady = _panel.playersReady, description = _panel.description})
 end)
 
 RegisterNetEvent('BloodBowl.GiveEntitiesToPlayers')
