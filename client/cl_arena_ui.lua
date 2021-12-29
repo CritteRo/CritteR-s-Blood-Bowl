@@ -157,7 +157,7 @@ AddEventHandler("BloodBowl.Countdown", function(_r, _g, _b, _waitTime, _playSoun
     if _playSound ~= nil and _playSound == true then
         PlaySoundFrontend(-1, "CHECKPOINT_PERFECT", "HUD_MINI_GAME_SOUNDSET", 1)
     end
-    scale = showCountdown(time, _r, _g, _b)
+    scale = BuildCountdown(time, _r, _g, _b)
     Citizen.CreateThread(function()
         while showCD do
             Citizen.Wait(1000)
