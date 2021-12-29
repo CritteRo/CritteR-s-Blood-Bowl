@@ -395,13 +395,13 @@ AddEventHandler('BloodBowl.StartGame', function()
         for k,v in spairs(serverArena.activePlayers, function(t,a,b) return t[b].checkpointsUsed < t[a].checkpointsUsed end) do
             --print(k,v.checkpointsUsed)
             if row_ == 1 then
-                _activeTable[row_] = {stat = v.name, value = "~y~"..row_..". "..v.score.." Remaining score~s~", score = v.score}
+                _activeTable[row_] = {stat = v.name, value = "~y~"..row_..". "..v.score.." Remaining score~s~", score = v.score, checkpointsUsed = v.checkpointsUsed, repairsUsed = v.repairsUsed, id = v.id}
             elseif row_ == 2 then
-                _activeTable[row_] = {stat = v.name, value = "~w~"..row_..". "..v.score.." Remaining score~s~", score = v.score}
+                _activeTable[row_] = {stat = v.name, value = "~w~"..row_..". "..v.score.." Remaining score~s~", score = v.score, checkpointsUsed = v.checkpointsUsed, repairsUsed = v.repairsUsed, id = v.id}
             elseif row_ == 3 then
-                _activeTable[row_] = {stat = v.name, value = "~r~"..row_..". "..v.score.." Remaining score~s~", score = v.score}
+                _activeTable[row_] = {stat = v.name, value = "~r~"..row_..". "..v.score.." Remaining score~s~", score = v.score, checkpointsUsed = v.checkpointsUsed, repairsUsed = v.repairsUsed, id = v.id}
             else
-                _activeTable[row_] = {stat = v.name, value = row_..". "..v.score.." Remaining score~s~", score = v.score}
+                _activeTable[row_] = {stat = v.name, value = row_..". "..v.score.." Remaining score~s~", score = v.score, checkpointsUsed = v.checkpointsUsed, repairsUsed = v.repairsUsed, id = v.id}
             end
             row_ = row_ + 1
         end
@@ -430,7 +430,8 @@ AddEventHandler('BloodBowl.StartGame', function()
         end
 
         Citizen.Wait(10000) --wait 10 seconds, then restart arena.
-        TriggerEvent('BloodBowl.ArenaFinished', _activeTable, serverArena.spectatingPlayers) --arg 1 = remaining players, including the winner, ordered DESC by points, arg 2 = players still in arena, who remained with 0 points.
+        -- we send _activeTable instead of activePlayers, because _activeTable is technically sorted by highest score
+        TriggerEvent('BloodBowl.Hook.ArenaFinished', _activeTable, serverArena.spectatingPlayers) --arg 1 = remaining players, including the winner, ordered DESC by points, arg 2 = players still in arena, who remained with 0 points.
         forceRestartArena(false, true, false, 0, 0)
     end
 end)
@@ -463,6 +464,7 @@ AddEventHandler('BloodBowl.CheckpointReached', function(_type)
                         local dist = #(vector3(originalPointsCoords[serverArena.gameData.cpSpot].x, originalPointsCoords[serverArena.gameData.cpSpot].y, originalPointsCoords[serverArena.gameData.cpSpot].z) - pedCoords)
                         if dist <= 7.0 then
                             serverArena.activePlayers[i].score = serverArena.activePlayers[i].score + 30
+                            serverArena.activePlayers[i].checkpointsUsed = serverArena.activePlayers[i].checkpointsUsed + 1
                             local lastSpot = serverArena.gameData.cpSpot
                             serverArena.gameData.cpSpot = math.random(1, #originalPointsCoords)
                             while lastSpot == serverArena.gameData.cpSpot do --making sure we don't spawn the same cp again
@@ -479,6 +481,7 @@ AddEventHandler('BloodBowl.CheckpointReached', function(_type)
                             while lastSpot == serverArena.gameData.repairSpot do --making sure we don't spawn the same cp again
                                 serverArena.gameData.repairSpot = math.random(1, #originalRepairCoords)
                             end
+                            serverArena.activePlayers[i].repairsUsed = serverArena.activePlayers[i].repairsUsed + 1
                             SetVehicleBodyHealth(serverArena.activePlayers[i].carID, 1000.0)
                             TriggerClientEvent('BloodBowl.Show_UI_Element', src, "banner", "small", "VEHICLE REPAIRED", "", 11, 5, true)
                             TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
@@ -500,7 +503,7 @@ AddEventHandler('BloodBowl.RequestInitialArenaData', function()
 end)
 
 function setPlayerInArena(_pID)
-    for i,k in pairs(serverPlayers) do -- WHY DOESN'T THIS PIECE OF SHIT TABLE WORK OTHERWISE?????!?!?!?!?!
+    for i,k in pairs(serverPlayers) do -- WHY DOESN'T THIS PIECE OF SH*T TABLE WORK OTHERWISE?????!?!?!?!?!
         if k.name == GetPlayerName(tonumber(_pID)) then
             serverPlayers[i].inArena = serverArena.gameData.gameID
         end
@@ -510,7 +513,7 @@ end
 
 function GetPlayerInArenaValue(_pID)
     local data = -2
-    for i,k in pairs(serverPlayers) do -- WHY DOESN'T THIS PIECE OF SHIT TABLE WORK OTHERWISE?????!?!?!?!?!
+    for i,k in pairs(serverPlayers) do -- WHY DOESN'T THIS PIECE OF SH*T TABLE WORK OTHERWISE?????!?!?!?!?!
         if k.name == GetPlayerName(tonumber(_pID)) then
             data = k.inArena 
             break
@@ -518,6 +521,17 @@ function GetPlayerInArenaValue(_pID)
     end
     return data
 end
+
+AddEventHandler('BloodBowl.Hook.ArenaFinished', function(_table1, _table2)
+    --table1 = players who still had points when the arena ended, including the winner.
+    for i,k in pairs(_table1) do
+        print('name: '..k.stat.." | score: "..k.score.." | src: "..k.id.." | cpUsed: "..k.checkpointsUsed.." | rpUsed: "..k.repairsUsed)
+    end
+    --table2 = spectating players. They ran out of points before the arena ended.
+    for i,k in pairs(_table2) do
+        print('name: '..k.name.." | src: "..k.id.." | cpUsed: "..k.checkpointsUsed.." | rpUsed: "..k.repairsUsed)
+    end
+end)
 
 --[[
     Test commands, should really be used.
