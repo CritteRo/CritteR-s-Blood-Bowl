@@ -100,15 +100,15 @@ function forceRestartArena(isSilent, isExpected, closeArenaAfterRestart, gameTyp
                 serverPlayers[i].inArena = -1
                 local ped = GetPlayerPed(i)
                 SetEntityCoords(ped, arenaCoords['outsideArena'].x , arenaCoords['outsideArena'].y, arenaCoords['outsideArena'].z, false, true, false, false)
-                if isSilent == false then
-                    if isExpected == true then
+                if not isSilent then
+                    if isExpected then
                         TriggerClientEvent('BloodBowl.Show_UI_Element', i, "notify", "[~r~Blood Bowl~s~] The arena has ended.")
                     else
                         TriggerClientEvent('BloodBowl.Show_UI_Element', i, "notify", "[~r~Blood Bowl~s~] An unexpected error ended the arena.")
                     end
                 end
             end
-            if isSilent == false and isExpected == true and k.showNotifications == true then
+            if not isSilent and isExpected and k.showNotifications then
                 TriggerClientEvent('BloodBowl.Show_UI_Element', k.srcID, "notify", "[~r~Blood Bowl~s~] The arena has ended.")
             end
         end
@@ -129,7 +129,7 @@ function forceRestartArena(isSilent, isExpected, closeArenaAfterRestart, gameTyp
     else
         print('WARNING: USED WRONG GAMETYPE IN forceRestartArena. :: sv_arena_handler.lua')
     end
-    if closeArenaAfterRestart == true then
+    if closeArenaAfterRestart then
         serverArena.status = 4
     end
     TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
@@ -188,7 +188,7 @@ AddEventHandler('BloodBowl.StartGameCountdown', function()
         end
     end
 
-    if srcIsHost == true and allReady == true then
+    if srcIsHost and allReady then
         --start countdown.
         serverArena.status = 1
         while serverArena.status == 1 do
@@ -199,7 +199,7 @@ AddEventHandler('BloodBowl.StartGameCountdown', function()
                 TriggerEvent('BloodBowl.StartGame')
             end
             TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
-            Citizen.Wait(1000)
+            Wait(1000)
         end
     end
 end)
@@ -224,7 +224,7 @@ AddEventHandler('BloodBowl.PlayerOpenedMainMenu', function(_isBot)
                 serverArena.status = 0
                 serverArena.startTimer = originalGameData.startTimer
             end
-            Citizen.Wait(200)
+            Wait(200)
             TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
         end
     end
@@ -290,7 +290,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             FreezeEntityPosition(gameCars[rows], true)
             serverArena.activePlayers[i].carID = gameCars[rows]
             while not DoesEntityExist(gameCars[rows]) do
-                Citizen.Wait(10)
+                Wait(10)
             end
             gameCopilots[rows] = CreateCopilot(gameCars[rows], spawnCoords[rows], 0)
             --SetPedIntoVehicle(ped, gameCars[rows], -1)
@@ -316,16 +316,16 @@ AddEventHandler('BloodBowl.StartGame', function()
         while serverArena.status == 2 and gameID == serverArena.gameData.gameID do --wait for everyone to watch the intro..
             local allReady = true
             for i,k in pairs(serverArena.activePlayers) do
-                if k.finishedIntro == false then
+                if not k.finishedIntro then
                     allReady = false
                 end
             end
-            if allReady == true then
+            if allReady then
                 serverArena.gameData.isEveryoneReady = true
                 TriggerClientEvent('BloodBowl.UpdateArenaData', -1, serverArena)
                 break
             end
-            Citizen.Wait(200) --we are running a loop here, so checking it every frame might not be that good of an ideea.
+            Wait(200) --we are running a loop here, so checking it every frame might not be that good of an ideea.
         end
 
         local carsForClient = {}
@@ -350,7 +350,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             TriggerClientEvent('BloodBowl.GiveEntitiesToPlayers',tonumber(k.id), carsForClient, copilotsForClient, driversForClient)
         end
 
-        Citizen.Wait(5000)
+        Wait(5000)
 
         for i,k in pairs(gameCars) do
             FreezeEntityPosition(k, false)
@@ -385,7 +385,7 @@ AddEventHandler('BloodBowl.StartGame', function()
                     break
                 end
             end
-            Citizen.Wait(1000)
+            Wait(1000)
         end
 
         local _activeTable = { --second slide. You can add as many "stats" as you want. They will appear from botton to top, so keep that in mind.
@@ -430,7 +430,7 @@ AddEventHandler('BloodBowl.StartGame', function()
             TriggerClientEvent("BloodBowl.FinaleUI", tonumber(k.id), _initialText, _activeTable, {startMoney = 0, finishMoney = 0}, {xpGained = 0}, (1 + #_activeTable * 1.5 + 2), true)
         end
 
-        Citizen.Wait(10000) --wait 10 seconds, then restart arena.
+        Wait(10000) --wait 10 seconds, then restart arena.
         -- we send _activeTable instead of activePlayers, because _activeTable is technically sorted by highest score
         TriggerEvent('BloodBowl.Hook.ArenaFinished', _activeTable, serverArena.spectatingPlayers) --arg 1 = remaining players, including the winner, ordered DESC by points, arg 2 = players still in arena, who remained with 0 points.
         forceRestartArena(false, true, false, 0, 0)
@@ -441,7 +441,7 @@ RegisterNetEvent('BloodBowl.FinishedIntro')
 AddEventHandler('BloodBowl.FinishedIntro', function()
     local src = source
     if serverArena.status == 2 and GetPlayerInArenaValue(src) == serverArena.gameData.gameID then
-        if serverArena.gameData.isEveryoneReady == false then
+        if not serverArena.gameData.isEveryoneReady then
             for i,k in pairs(serverArena.activePlayers) do
                 if tonumber(k.id) == src then
                     serverArena.activePlayers[i].finishedIntro = true
