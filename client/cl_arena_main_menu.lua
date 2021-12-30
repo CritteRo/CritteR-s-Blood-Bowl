@@ -28,7 +28,7 @@ function ShowMainMenu(_data, _actuallyOpen)
     local playerRows = 1
     for i,k in pairs(_data.lobbyPlayers) do
         print(k.id.." / "..GetPlayerServerId(PlayerId()))
-        if k.id == GetPlayerServerId(PlayerId()) then --if it's me!
+        if k.id == GetPlayerServerId(PlayerId()) then
             myLobbyId = i
         end
         if k.ready == 0 then
@@ -38,16 +38,16 @@ function ShowMainMenu(_data, _actuallyOpen)
         playerRows = playerRows + 1
     end
 
-    for i=0,16-playerRows do --fill the player list with blanks.
+    for i=0,16-playerRows do -- Fill the player list with blanks.
         TriggerEvent('lobbymenu:AddPlayer', 'BloodBowl.MainMenu.main', "FREE SLOT", "", "", 0, 0, true, 2, 2, true)
     end
 
     if myLobbyId ~= -1 then
         if _data.lobbyPlayers[myLobbyId].isHost == "HOST" then
             TriggerEvent('lobbymenu:AddButton', 'BloodBowl.MainMenu.main', {button = "startGame", isHost = _data.lobbyPlayers[myLobbyId].isHost}, "Start Arena!", "", false, 0, "BloodBowl.Main.Menu.Button.Used")
-            if allReady == true and #_data.lobbyPlayers >= 3 then
+            if allReady and #_data.lobbyPlayers >= 3 then
                 TriggerEvent('lobbymenu:SetTooltipMessage', 'BloodBowl.MainMenu.main', GetLabelText('CBB_MENU_ALERT_START_GAME_UNLOCKED'))
-            elseif allReady == true and #_data.lobbyPlayers < 3 then
+            elseif allReady and #_data.lobbyPlayers < 3 then
                 TriggerEvent('lobbymenu:SetTooltipMessage', 'BloodBowl.MainMenu.main', GetLabelText('CBB_MENU_ALERT_START_GAME_LOCKED_2'))
             else
                 TriggerEvent('lobbymenu:SetTooltipMessage', 'BloodBowl.MainMenu.main', GetLabelText('CBB_MENU_ALERT_START_GAME_LOCKED_1'))
@@ -61,8 +61,6 @@ function ShowMainMenu(_data, _actuallyOpen)
                 TriggerEvent('lobbymenu:SetTooltipMessage', 'BloodBowl.MainMenu.main', GetLabelText('CBB_MENU_ALERT_YOU_READY'))
             end
         end
-    else
-        print('else')
     end
 
     if _data.status == 1 then
@@ -75,26 +73,23 @@ function ShowMainMenu(_data, _actuallyOpen)
 
     TriggerEvent('lobbymenu:AddButton', 'BloodBowl.MainMenu.main', {button = "exit", isHost = 'na'}, "Exit", "", false, 0, "BloodBowl.Main.Menu.Button.Used")
 
-    if _actuallyOpen == true then
+    if _actuallyOpen then
         TriggerEvent('lobbymenu:OpenMenu', 'BloodBowl.MainMenu.main', true)
     end
 end
 
 AddEventHandler('lobbymenu:OpenMenu', function(_id, _unused)
-    if _id == 'BloodBowl.MainMenu.main' then
-        if isMenuShowing == false then
-            isMenuShowing = true
-            print('meme')
-            Citizen.Wait(200)
-            TriggerServerEvent('BloodBowl.PlayerOpenedMainMenu')
-        end
+    if _id == 'BloodBowl.MainMenu.main' and not isMenuShowing then
+        isMenuShowing = true
+        Wait(100)
+        TriggerServerEvent('BloodBowl.PlayerOpenedMainMenu')
     end
 end)
 
 AddEventHandler('lobbymenu:CloseMenu', function()
     if exports['critLobby']:LobbyMenuGetActiveMenu() == 'BloodBowl.MainMenu.main' then
         print('closed1')
-        if isMenuShowing == true then
+        if isMenuShowing then
             isMenuShowing = false
             TriggerServerEvent('BloodBowl.PlayerClosedMainMenu')
         end
