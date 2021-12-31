@@ -22,19 +22,19 @@ local testMessages = {
 local showingIntro = false
 local skipNextFrame = false
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
-        if arenaData.gameData.isEveryoneReady == false and arenaData.status == 2 and showingIntro == false then
+        if not (arenaData.gameData.isEveryoneReady and showingIntro) and arenaData.status == 2 then
             caption("Waiting for others to join...", 10)
-            Citizen.Wait(10)
+            Wait(1)
         else
-            Citizen.Wait(200)
+            Wait(100)
         end
     end
 end)
 
 RegisterCommand('skipintro', function()
-    if skipNextFrame == false and showingIntro == true then
+    if not skipNextFrame and showingIntro then
         skipNextFrame = true
         ShowBusySpinner(GetLabelText('CBB_INTRO_SKIPPING'))
     end
@@ -78,7 +78,7 @@ function showArenaIntro(_aID, _messages)
     showingIntro = true
 
     for i,k in pairs(cams) do
-        if skipNextFrame == false or i <= 2 then
+        if not skipNextFrame or i <= 2 then
             local _,int = math.modf(i/2)
             if int > 0 then
                 SetFocusPosAndVel(cams[i].pos[1], cams[i].pos[2], cams[i].pos[3], 0.0, 0.0, 0.0)
@@ -89,7 +89,7 @@ function showArenaIntro(_aID, _messages)
                     caption(tostring(_messages[messageRow]), cams[i].time)
                     messageRow = messageRow + 1
                 end
-                Citizen.Wait(cams[i].time)
+                Wait(cams[i].time)
             end
         else
             break

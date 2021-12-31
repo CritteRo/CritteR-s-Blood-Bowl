@@ -1,5 +1,4 @@
-local carID = 0
-local pedID = 0
+local carID, pedID = 0, 0
 
 --We actually use 'BloodBowl.CreateGroups', to create the relationship groups needed for the copilot behavior.
 
@@ -22,11 +21,11 @@ AddEventHandler('BloodBowl.CreateGroups', function()
     AddRelationshipGroup('GROUP_BLOODBOWL_TEST_16')
 
     for i=1,16 do
-        SetRelationshipBetweenGroups(1--[[respect]], GetHashKey("GROUP_BLOODBOWL_TEST_"..i), GetHashKey("PLAYER"))
-        SetRelationshipBetweenGroups(1--[[respect]], GetHashKey("PLAYER"), GetHashKey("GROUP_BLOODBOWL_TEST_"..i))
+        SetRelationshipBetweenGroups(1, GetHashKey('GROUP_BLOODBOWL_TEST_'..i), `PLAYER`)
+        SetRelationshipBetweenGroups(1, `PLAYER`, GetHashKey('GROUP_BLOODBOWL_TEST_'..i))
         for k=1,16 do
             if i ~= k then
-                SetRelationshipBetweenGroups(5--[[hate]], GetHashKey("GROUP_BLOODBOWL_TEST_"..i), GetHashKey("GROUP_BLOODBOWL_TEST_"..k))
+                SetRelationshipBetweenGroups(5, GetHashKey('GROUP_BLOODBOWL_TEST_'..i), GetHashKey('GROUP_BLOODBOWL_TEST_'..k))
             end
         end
     end
@@ -34,40 +33,39 @@ end)
 
 TriggerEvent('BloodBowl.CreateGroups')
 
-
 --[[
 RegisterNetEvent('test.SendPedAndCarToClient2')
 AddEventHandler('test.SendPedAndCarToClient2', function(cars, peds)
     for i,k in pairs(peds) do
-        while IsEntityAPed(NetToPed(k.driver)) == false or IsEntityAPed(NetToPed(k.shotgun)) == false do
-            Citizen.Wait(10)
+        while not (IsEntityAPed(NetToPed(k.driver)) or IsEntityAPed(NetToPed(k.shotgun))) do
+            Wait(10)
         end
     end
 
     for i,k in pairs(cars) do
-        while IsEntityAVehicle(NetToVeh(k)) == false do
-            Citizen.Wait(10)
+        while not IsEntityAVehicle(NetToVeh(k)) do
+            Wait(10)
         end
     end
     print('Entities loaded for blood bowl')
 
     local groups = {
-        [1] = GetHashKey('GROUP_BLOODBOWL_TEST_1'),
-        [2] = GetHashKey('GROUP_BLOODBOWL_TEST_2'),
-        [3] = GetHashKey('GROUP_BLOODBOWL_TEST_3'),
-        [4] = GetHashKey('GROUP_BLOODBOWL_TEST_4'),
-        [5] = GetHashKey('GROUP_BLOODBOWL_TEST_5'),
-        [6] = GetHashKey('GROUP_BLOODBOWL_TEST_6'),
-        [7] = GetHashKey('GROUP_BLOODBOWL_TEST_7'),
-        [8] = GetHashKey('GROUP_BLOODBOWL_TEST_8'),
-        [9] = GetHashKey('GROUP_BLOODBOWL_TEST_9'),
-        [10] = GetHashKey('GROUP_BLOODBOWL_TEST_10'),
-        [11] = GetHashKey('GROUP_BLOODBOWL_TEST_11'),
-        [12] = GetHashKey('GROUP_BLOODBOWL_TEST_12'),
-        [13] = GetHashKey('GROUP_BLOODBOWL_TEST_13'),
-        [14] = GetHashKey('GROUP_BLOODBOWL_TEST_14'),
-        [15] = GetHashKey('GROUP_BLOODBOWL_TEST_15'),
-        [16] = GetHashKey('GROUP_BLOODBOWL_TEST_16'),
+        [1] = `GROUP_BLOODBOWL_TEST_1`,
+        [2] = `GROUP_BLOODBOWL_TEST_2`,
+        [3] = `GROUP_BLOODBOWL_TEST_3`,
+        [4] = `GROUP_BLOODBOWL_TEST_4`,
+        [5] = `GROUP_BLOODBOWL_TEST_5`,
+        [6] = `GROUP_BLOODBOWL_TEST_6`,
+        [7] = `GROUP_BLOODBOWL_TEST_7`,
+        [8] = `GROUP_BLOODBOWL_TEST_8`,
+        [9] = `GROUP_BLOODBOWL_TEST_9`,
+        [10] = `GROUP_BLOODBOWL_TEST_10`,
+        [11] = `GROUP_BLOODBOWL_TEST_11`,
+        [12] = `GROUP_BLOODBOWL_TEST_12`,
+        [13] = `GROUP_BLOODBOWL_TEST_13`,
+        [14] = `GROUP_BLOODBOWL_TEST_14`,
+        [15] = `GROUP_BLOODBOWL_TEST_15`,
+        [16] = `GROUP_BLOODBOWL_TEST_16`,
     }
 
     local carIDS = {}
@@ -81,7 +79,7 @@ AddEventHandler('test.SendPedAndCarToClient2', function(cars, peds)
             driver = NetToPed(k.driver),
             shotgun = NetToPed(k.shotgun),
         }
-        SetPedInfiniteAmmo(pedIDS[i].shotgun, true, "weapon_microsmg")
+        SetPedInfiniteAmmo(pedIDS[i].shotgun, true, 'weapon_microsmg')
         SetPedCombatAttributes(pedIDS[i].shotgun, 2, true)
         SetPedCombatAttributes(pedIDS[i].shotgun, 46, true)
         SetPedCombatAttributes(pedIDS[i].shotgun, 3, false)

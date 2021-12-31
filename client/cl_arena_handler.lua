@@ -43,7 +43,7 @@ AddEventHandler('BloodBowl.UpdateArenaData', function(_data)
         BusyspinnerOff()
     end
     if exports['critLobby']:LobbyMenuGetActiveMenu() == 'BloodBowl.MainMenu.main' then
-        Citizen.Wait(200) --a simple wait, because the frontend framework is slow
+        Wait(200)
         ShowMainMenu(arenaData, false)
         TriggerEvent('lobbymenu:ReloadMenu')
     end
@@ -53,35 +53,34 @@ end)
 RegisterNetEvent('BloodBowl.GiveEntitiesToPlayers')
 RegisterNetEvent('BloodBowl.GiveEntitiesToPlayers', function(gameCars, gamePeds, gamePeds2)
     for i,k in pairs(gamePeds) do
-        while IsEntityAPed(NetToPed(k)) == false do
-            Citizen.Wait(10)
+        while not IsEntityAPed(NetToPed(k)) do
+            Wait(10)
         end
     end
 
     for i,k in pairs(gameCars) do
-        while IsEntityAVehicle(NetToVeh(k)) == false do
-            Citizen.Wait(10)
+        while not IsEntityAVehicle(NetToVeh(k)) do
+            Wait(10)
         end
     end
-    --print('Entities loaded for blood bowl')
 
     local groups = {
-        [1] = GetHashKey('GROUP_BLOODBOWL_TEST_1'),
-        [2] = GetHashKey('GROUP_BLOODBOWL_TEST_2'),
-        [3] = GetHashKey('GROUP_BLOODBOWL_TEST_3'),
-        [4] = GetHashKey('GROUP_BLOODBOWL_TEST_4'),
-        [5] = GetHashKey('GROUP_BLOODBOWL_TEST_5'),
-        [6] = GetHashKey('GROUP_BLOODBOWL_TEST_6'),
-        [7] = GetHashKey('GROUP_BLOODBOWL_TEST_7'),
-        [8] = GetHashKey('GROUP_BLOODBOWL_TEST_8'),
-        [9] = GetHashKey('GROUP_BLOODBOWL_TEST_9'),
-        [10] = GetHashKey('GROUP_BLOODBOWL_TEST_10'),
-        [11] = GetHashKey('GROUP_BLOODBOWL_TEST_11'),
-        [12] = GetHashKey('GROUP_BLOODBOWL_TEST_12'),
-        [13] = GetHashKey('GROUP_BLOODBOWL_TEST_13'),
-        [14] = GetHashKey('GROUP_BLOODBOWL_TEST_14'),
-        [15] = GetHashKey('GROUP_BLOODBOWL_TEST_15'),
-        [16] = GetHashKey('GROUP_BLOODBOWL_TEST_16'),
+        [1] = `GROUP_BLOODBOWL_TEST_1`,
+        [2] = `GROUP_BLOODBOWL_TEST_2`,
+        [3] = `GROUP_BLOODBOWL_TEST_3`,
+        [4] = `GROUP_BLOODBOWL_TEST_4`,
+        [5] = `GROUP_BLOODBOWL_TEST_5`,
+        [6] = `GROUP_BLOODBOWL_TEST_6`,
+        [7] = `GROUP_BLOODBOWL_TEST_7`,
+        [8] = `GROUP_BLOODBOWL_TEST_8`,
+        [9] = `GROUP_BLOODBOWL_TEST_9`,
+        [10] = `GROUP_BLOODBOWL_TEST_10`,
+        [11] = `GROUP_BLOODBOWL_TEST_11`,
+        [12] = `GROUP_BLOODBOWL_TEST_12`,
+        [13] = `GROUP_BLOODBOWL_TEST_13`,
+        [14] = `GROUP_BLOODBOWL_TEST_14`,
+        [15] = `GROUP_BLOODBOWL_TEST_15`,
+        [16] = `GROUP_BLOODBOWL_TEST_16`,
     }
 
     local carIDS = {}
@@ -132,8 +131,9 @@ AddEventHandler('BloodBowl.StartClientGameLoop', function()
     while arenaData.gameData.gameID == gameID and arenaData.status == 2 do
         pointSpot = arenaData.gameData.cpSpot
         repairSpot = arenaData.gameData.repairSpot
-        local pointDist = #(vector3(pointCoords[pointSpot].x, pointCoords[pointSpot].y, pointCoords[pointSpot].z) - GetEntityCoords(ped))
-        local rprDist = #(vector3(rprCoords[repairSpot].x, rprCoords[repairSpot].y, rprCoords[repairSpot].z) - GetEntityCoords(ped))
+        local pedPos = GetEntityCoords(ped)
+        local pointDist = #(vector3(pointCoords[pointSpot].x, pointCoords[pointSpot].y, pointCoords[pointSpot].z) - pedPos)
+        local rprDist = #(vector3(rprCoords[repairSpot].x, rprCoords[repairSpot].y, rprCoords[repairSpot].z) - pedPos)
 
         if updateCheckpointsThisFrame == true then
             setCheckpoint("repair", 11, rprCoords[repairSpot].x, rprCoords[repairSpot].y, rprCoords[repairSpot].z+2.0, 0.0, 0.0, 0.0, 6.0, 60, 60, 255, 240)
@@ -147,7 +147,7 @@ AddEventHandler('BloodBowl.StartClientGameLoop', function()
         if rprDist <= 6.0 then
             TriggerServerEvent('BloodBowl.CheckpointReached', 'repair')
         end
-        Citizen.Wait(0)
+        Wait(0)
     end
     RemoveBlip(blip1)
     RemoveBlip(blip2)
@@ -156,8 +156,9 @@ end)
 RegisterNetEvent('BloodBowl.DisableMyVehicle')
 AddEventHandler('BloodBowl.DisableMyVehicle', function()
     if arenaData.status == 2 or arenaData.status == 3 then
-        if IsPedInAnyVehicle(PlayerPedId(), false) then
-            local _veh = GetVehiclePedIsIn(PlayerPedId(), false)
+        local plyPed = PlayerPedId()
+        if IsPedInAnyVehicle(plyPed, false) then
+            local _veh = GetVehiclePedIsIn(plyPed, false)
             BringVehicleToHalt(_veh, 3.0, 100, true)
         end
     end

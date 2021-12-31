@@ -53,7 +53,7 @@ local maps = {
 	}
 }
 
-Citizen.CreateThread(function()
+CreateThread(function()
 	-- New Arena : 2800.00, -3800.00, 100.00
 	RequestIpl("xs_arena_interior")
 

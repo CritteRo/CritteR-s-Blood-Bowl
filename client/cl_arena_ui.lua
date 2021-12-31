@@ -47,18 +47,16 @@ function ShowBusySpinner(_text)
 end
 
 function BuildAndShowCreditsBlock(_role, _name, _x, _y)
-    Citizen.CreateThread(function()
+    CreateThread(function()
         function drawCredits(role, name)
             local scaleform = RequestScaleformMovie("OPENING_CREDITS")
-            while not HasScaleformMovieLoaded(scaleform) do
-                Citizen.Wait(0)
-            end
+            while not HasScaleformMovieLoaded(scaleform) do Wait(0) end
             Scaleform.CallFunction(scaleform, false, "TEST_CREDIT_BLOCK", role, name, 'left', 0.0, 50.0, 1, 5, 10, 10)
             return scaleform
         end
         local scale = drawCredits(_role, _name)
         while showCreditsBanner do
-            Citizen.Wait(1)
+            Wait(1)
             DrawScaleformMovie(scale, _x, _y, 0.71, 0.68, 255, 255, 255, 255)
         end
     end)
@@ -74,7 +72,7 @@ function BuildCountdown(_number, _r, _g, _b)
 end
 
 function BuildAndShowEndScreen(ZinitialText, Ztable, Zmoney, Zxp)
-    Citizen.CreateThread(function()
+    CreateThread(function()
         function drawHeist(_initialText, _table, _money, _xp)
             local scaleform = Scaleform.Request('HEIST_CELEBRATION')
             local scaleform_bg = Scaleform.Request('HEIST_CELEBRATION_BG')
@@ -123,7 +121,7 @@ function BuildAndShowEndScreen(ZinitialText, Ztable, Zmoney, Zxp)
         end
         local scale, scale_bg, scale_fg = drawHeist(ZinitialText, Ztable, Zmoney, Zxp)
         while showHeistBanner do
-            Citizen.Wait(1)
+            Wait(1)
             DrawScaleformMovieFullscreenMasked(scale_bg, scale_fg, 255, 255, 255, 50)
             DrawScaleformMovieFullscreen(scale, 255, 255, 255, 255)
         end
@@ -134,7 +132,7 @@ end
 RegisterNetEvent('BloodBowl.FinaleUI')
 AddEventHandler("BloodBowl.FinaleUI", function(_initialText, _table, _money, _xp, _waitTime, _playSound)
     showHeistBanner = true
-    if _playSound ~= nil and _playSound == true then
+    if _playSound ~= nil and _playSound  then
         PlaySoundFrontend(-1, "CHECKPOINT_PERFECT", "HUD_MINI_GAME_SOUNDSET", 1)
     end
     BuildAndShowEndScreen(_initialText, _table, _money, _xp)
@@ -142,8 +140,8 @@ AddEventHandler("BloodBowl.FinaleUI", function(_initialText, _table, _money, _xp
     BeginTextCommandBusyspinnerOn("STRING")
     AddTextComponentSubstringPlayerName(GetLabelText('LABEL_EXIT_ARENA'))
     EndTextCommandBusyspinnerOn(1)
-    Citizen.CreateThread(function()
-        Citizen.Wait(tonumber(_waitTime) * 1000)
+    CreateThread(function()
+        Wait(tonumber(_waitTime) * 1000)
         showHeistBanner = false
         TriggerScreenblurFadeOut(1000)
     end)
@@ -154,13 +152,13 @@ AddEventHandler("BloodBowl.Countdown", function(_r, _g, _b, _waitTime, _playSoun
     local showCD = true
     local time = _waitTime
     local scale = 0
-    if _playSound ~= nil and _playSound == true then
+    if _playSound ~= nil and _playSound  then
         PlaySoundFrontend(-1, "CHECKPOINT_PERFECT", "HUD_MINI_GAME_SOUNDSET", 1)
     end
     scale = BuildCountdown(time, _r, _g, _b)
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while showCD do
-            Citizen.Wait(1000)
+            Wait(1000)
             if time > 1 then
                 time = time - 1
                 scale = BuildCountdown(time, _r, _g, _b)
@@ -172,9 +170,9 @@ AddEventHandler("BloodBowl.Countdown", function(_r, _g, _b, _waitTime, _playSoun
             end
         end
     end)
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while showCD do
-            Citizen.Wait(1)
+            Wait(1)
             DrawScaleformMovieFullscreen(scale, 255, 255, 255, 255)
         end
     end)
@@ -199,19 +197,19 @@ AddEventHandler('BloodBowl.Show_UI_Element', function(type, ...)
 end)
 
 AddEventHandler("BloodBowl.BigBanner", function(_title, _subtitle, _color, _waitTime, _playSound)
-    if _playSound ~= nil and _playSound == true then
+    if _playSound ~= nil and _playSound  then
         PlaySoundFrontend(-1, "CHECKPOINT_PERFECT", "HUD_MINI_GAME_SOUNDSET", 1)
     end
     ScaleformVarious = BuildBigBanner(_title, _subtitle, _color)
     bannerTimeLeft = _waitTime * 100
-    if isBannerShowing == false then
+    if not isBannerShowing then
         isBannerShowing = true
-        Citizen.CreateThread(function()
-            while isBannerShowing == true do
+        CreateThread(function()
+            while isBannerShowing  do
                 if bannerTimeLeft == 20 then
                     Scaleform.CallFunction(ScaleformVarious, false, "SHARD_ANIM_OUT", 2, 0.4, 0)
                 end
-                Citizen.Wait(1)
+                Wait(1)
                 bannerTimeLeft = bannerTimeLeft - 1
                 if bannerTimeLeft <= 0 then
                     isBannerShowing = false
@@ -223,19 +221,19 @@ AddEventHandler("BloodBowl.BigBanner", function(_title, _subtitle, _color, _wait
 end)
 
 AddEventHandler("BloodBowl.SmallBanner", function(_title, _subtitle, _color, _waitTime, _playSound)
-    if _playSound ~= nil and _playSound == true then
+    if _playSound ~= nil and _playSound  then
         PlaySoundFrontend(-1, "CHECKPOINT_PERFECT", "HUD_MINI_GAME_SOUNDSET", 1)
     end
     ScaleformVarious = BuildSmallBanner(_title, _subtitle, _color)
     bannerTimeLeft = _waitTime * 100
-    if isBannerShowing == false then
+    if not isBannerShowing then
         isBannerShowing = true
-        Citizen.CreateThread(function()
-            while isBannerShowing == true do
+        CreateThread(function()
+            while isBannerShowing  do
                 if bannerTimeLeft == 20 then
                     Scaleform.CallFunction(ScaleformVarious, false, "SHARD_ANIM_OUT", 2, 0.4, 0)
                 end
-                Citizen.Wait(1)
+                Wait(1)
                 bannerTimeLeft = bannerTimeLeft - 1
                 if bannerTimeLeft <= 0 then
                     isBannerShowing = false

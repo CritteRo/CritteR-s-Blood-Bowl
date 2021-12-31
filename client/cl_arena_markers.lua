@@ -9,7 +9,7 @@ outsideScaleformData = {
     belowMessage = "Game in Progress",
 }
 
-Citizen.CreateThread(function()
+CreateThread(function()
     outsideScaleform = Scaleform.Request('MP_MISSION_NAME_FREEMODE')
     Scaleform.CallFunction(outsideScaleform, false, "SET_MISSION_INFO", outsideScaleformData.description, outsideScaleformData.name, "", '', outsideScaleformData.belowMessage, false, " "..outsideScaleformData.playersReady, outsideScaleformData.rp, outsideScaleformData.cash,"")
     TriggerEvent('bloodBowl.GenerateTextEntries')
@@ -26,16 +26,15 @@ Citizen.CreateThread(function()
             canSeeTheMarker = true
         elseif dist <= range + 100 then
             canSeeTheMarker = true
-            --Citizen.Wait(1000)
         else
-            Citizen.Wait(4000)
+            Wait(4000)
         end
-        if canSeeTheMarker == true then
+        if canSeeTheMarker then
             --show checkpoint scaleform here. Also show the Alert that tells you to press a button. AANNNDDDD handle the button press.
             if not IsPauseMenuActive() then
                 local camcoord = GetFinalRenderedCamRot(2)
                 DrawScaleformMovie_3dSolid(outsideScaleform, arenaCoords['outsideArena'].x, arenaCoords['outsideArena'].y, arenaCoords['outsideArena'].z+3, camcoord, 1.0, 1.0, 6.0, 6.0, 6.0, 100)
-                if insideThemarker == true then
+                if insideThemarker then
                     alert(GetLabelText('CBB_ALERT_OPEN_OUTSIDE_MENU'))
                     if IsControlJustReleased(0, 23) then
                         ShowMainMenu(arenaData, true)
@@ -43,7 +42,7 @@ Citizen.CreateThread(function()
                 end
             end
         end
-        Citizen.Wait(0)
+        Wait(0)
     end
 end)
 
