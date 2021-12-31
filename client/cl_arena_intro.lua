@@ -24,7 +24,7 @@ local skipNextFrame = false
 
 CreateThread(function()
     while true do
-        if not (arenaData.gameData.isEveryoneReady and showingIntro) and arenaData.status == 2 then
+        if arenaData.gameData.isEveryoneReady == false and arenaData.status == 2 and showingIntro == false then
             caption("Waiting for others to join...", 10)
             Wait(1)
         else

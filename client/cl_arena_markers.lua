@@ -10,6 +10,7 @@ outsideScaleformData = {
 }
 
 CreateThread(function()
+    local couldSeeMarkerBefore = false
     outsideScaleform = Scaleform.Request('MP_MISSION_NAME_FREEMODE')
     Scaleform.CallFunction(outsideScaleform, false, "SET_MISSION_INFO", outsideScaleformData.description, outsideScaleformData.name, "", '', outsideScaleformData.belowMessage, false, " "..outsideScaleformData.playersReady, outsideScaleformData.rp, outsideScaleformData.cash,"")
     TriggerEvent('bloodBowl.GenerateTextEntries')
@@ -41,6 +42,12 @@ CreateThread(function()
                     end
                 end
             end
+
+            if not couldSeeMarkerBefore then
+                Scaleform.CallFunction(outsideScaleform, false, "SET_MISSION_INFO", outsideScaleformData.description, outsideScaleformData.name, "", '', outsideScaleformData.belowMessage, false, " "..outsideScaleformData.playersReady, outsideScaleformData.rp, outsideScaleformData.cash,"")
+            end
+        else
+            couldSeeMarkerBefore = false
         end
         Wait(0)
     end

@@ -42,7 +42,7 @@ function CreateCopilot(_veh, _coords, _seat)
     GiveWeaponToPed(ped, "weapon_microsmg", 9999, false, true)
     SetPedArmour(ped, 100)
     SetPedConfigFlag(ped, 185, true) --prevent auto shufle to driver seat
-    MarkServerEntityAsNoLongerNeeded(ped)
+    --MarkServerEntityAsNoLongerNeeded(ped)
     return ped
 end
 
