@@ -489,9 +489,11 @@ AddEventHandler('BloodBowl.CheckpointReached', function(_type)
                         end
                     end
                 else
+                    --[[
                     if _type == "points" then
                         serverArena.activePlayers[i].score = serverArena.activePlayers[i].score + 5 -- we give all cars a +5 seconds, because we are nice, and games end too fast otherwise.
                     end
+                    ]]
                 end
             end
         end
