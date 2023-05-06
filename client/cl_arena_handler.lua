@@ -52,10 +52,13 @@ end)
 
 RegisterNetEvent('BloodBowl.GiveEntitiesToPlayers')
 RegisterNetEvent('BloodBowl.GiveEntitiesToPlayers', function(gameCars, gamePeds, gamePeds2)
+    local retries = 0
     for i,k in pairs(gamePeds) do
-        while not IsEntityAPed(NetToPed(k)) do
+        while not IsEntityAPed(NetToPed(k)) or retries < 20 do
             Wait(10)
+            retries = retries + 1
         end
+        retries = 0
     end
 
     for i,k in pairs(gameCars) do
